@@ -2,15 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>//.:1313/Docu/</loc>
+    <loc>https://konzepte-moderner-softwareentwicklung.github.io:1313/Docu/</loc>
     <lastmod>2025-06-05T21:59:11+02:00</lastmod>
   </url><url>
-    <loc>//.:1313/Docu/docs/rating-service/</loc>
+    <loc>https://konzepte-moderner-softwareentwicklung.github.io:1313/Docu/docs/rating-service/</loc>
   </url><url>
-    <loc>//.:1313/Docu/docs/tracking-service/</loc>
+    <loc>https://konzepte-moderner-softwareentwicklung.github.io:1313/Docu/docs/tracking-service/</loc>
   </url><url>
-    <loc>//.:1313/Docu/categories/</loc>
+    <loc>https://konzepte-moderner-softwareentwicklung.github.io:1313/Docu/categories/</loc>
   </url><url>
-    <loc>//.:1313/Docu/tags/</loc>
+    <loc>https://konzepte-moderner-softwareentwicklung.github.io:1313/Docu/tags/</loc>
   </url>
 </urlset>
