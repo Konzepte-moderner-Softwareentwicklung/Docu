@@ -19,14 +19,13 @@ jobs:
           hugo-version: '0.111.3'
 
       - name: Build Hugo site
-        run: hugo --minify -s my-site
+        run: hugo --minify -s my-site --baseURL "https://konzepte-moderner-softwareentwicklung.github.io/Docu/"
 
-      - name: Deploy to gh-pages branch
-        uses: peaceiris/actions-gh-pages@v4
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          # Nutze PAT, damit Push auch bei restriktiven Rechten klappt
-          github_token: ${{ secrets.ACCESS_TOKEN }}
-          publish_dir: ./my-site/public
-          publish_branch: gh-pages
-          # Optional: Commit message anpassen
-          commit_message: "Deploy Hugo site via GitHub Actions"
+          # Upload entire repository
+          path: './my-site/public'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
