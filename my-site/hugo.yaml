@@ -1,7 +1,7 @@
 baseURL: https://example.org/
 languageCode: de-de
 title: My Cargonaut
-
+baseURL: "https://konzepte-moderner-softwareentwicklung.github.io/Docu/"
 menu:
   main:
     - name: Documentation
