@@ -25,7 +25,7 @@ jobs:
         uses: peaceiris/actions-gh-pages@v4
         with:
           # Nutze PAT, damit Push auch bei restriktiven Rechten klappt
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.ACCESS_TOKEN }}
           publish_dir: ./my-site/public
           publish_branch: gh-pages
           # Optional: Commit message anpassen
