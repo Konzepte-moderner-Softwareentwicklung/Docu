@@ -31,12 +31,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Setup Hugo
-        uses: peaceiris/actions-hugo@v3
-        with:
-          hugo-version: '0.111.3'
-      - name: Build Hugo site
-        run: hugo --minify -s my-site --baseURL "https://konzepte-moderner-softwareentwicklung.github.io/Docu/"
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
