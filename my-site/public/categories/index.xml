@@ -1,1 +1,18 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>My Cargonaut – Categories</title><link>https://konzepte-moderner-softwareentwicklung.github.io/Docu/categories/</link><description>Recent content in Categories on My Cargonaut</description><generator>Hugo -- gohugo.io</generator><language>de-de</language><atom:link href="https://konzepte-moderner-softwareentwicklung.github.io/Docu/categories/index.xml" rel="self" type="application/rss+xml"/></channel></rss>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>My Cargonaut – Categories</title>
+    <link>//.:1313/Docs/categories/</link>
+    <description>Recent content in Categories on My Cargonaut</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>de-de</language>
+    
+	  <atom:link href="//.:1313/Docs/categories/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
+    
+    
+  </channel>
+</rss>

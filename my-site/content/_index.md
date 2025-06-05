@@ -1,6 +1,4 @@
 ---
-date: '2025-06-05T21:59:07+02:00'
-draft: true
 title: 'Docs KMS'
 ---
 # Dokumentation – Feature-Übersicht
