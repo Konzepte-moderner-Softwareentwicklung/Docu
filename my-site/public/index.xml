@@ -1,0 +1,18 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>My Cargonaut – Docs KMS</title>
+    <link>http://localhost:1313/</link>
+    <description>Recent content in Docs KMS on My Cargonaut</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>de-de</language>
+    <lastBuildDate>Thu, 05 Jun 2025 21:59:07 +0200</lastBuildDate>
+    
+	  <atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+      
+    
+    
+  </channel>
+</rss>
