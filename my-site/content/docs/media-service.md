@@ -1,6 +1,4 @@
 ---
-date: '2025-06-05T21:59:11+02:00'
-draft: true
 title: 'Media Service'
 ---
 

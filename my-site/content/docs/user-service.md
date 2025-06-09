@@ -1,120 +1,109 @@
 ---
-date: '2025-06-05T21:59:11+02:00'
-draft: true
 title: 'User Service'
 ---
 
-# UserService API Dokumentation
+Dieser Service ermöglicht das **Anlegen und Abrufen von Benutzern** über eine einfache API. Die Authentifizierung (Login, Token, WebAuthn) ist hierbei **nicht erforderlich**.
 
-Der UserService stellt eine REST-API für Benutzerverwaltung, Login und WebAuthn-Authentifizierung bereit.
+## 🚀 Funktionen
 
-> **Hinweis:** Die API setzt JWT-Token für geschützte Endpunkte voraus.
+### 🔹 Benutzer anlegen
 
----
+Verwende den bereitgestellten `UserBuilder`, um einen neuen Benutzer zu erstellen. Dies ist ohne vorherige Anmeldung möglich.
 
-## Endpunkte
-
-| Methode | Pfad                                    | Beschreibung                               | Auth nötig? |
-| ------- | --------------------------------------- | ------------------------------------------ | ----------- |
-| GET     | `/`                                     | Alle Benutzer abrufen                      | Nein        |
-| POST    | `/`                                     | Benutzer erstellen                         | Nein        |
-| GET     | `/{id}`                                 | Benutzer nach ID abrufen                   | Nein        |
-| PUT     | `/{id}`                                 | Benutzer aktualisieren                     | Ja          |
-| DELETE  | `/{id}`                                 | Benutzer löschen                           | Ja          |
-| GET     | `/email?email={email}`                  | Benutzer per E-Mail abrufen                | Nein        |
-| POST    | `/login`                                | Login mit Email und Passwort, JWT erhalten | Nein        |
-| GET     | `/webauthn/register/options`            | WebAuthn Registrierung starten             | Ja          |
-| POST    | `/webauthn/register`                    | WebAuthn Registrierung abschließen         | Ja          |
-| GET     | `/webauthn/login/options?email={email}` | WebAuthn Login starten                     | Nein        |
-| POST    | `/webauthn/login`                       | WebAuthn Login abschließen                 | Nein        |
-
----
-
-## Beispiel JavaScript Client
+#### Beispiel:
 
 ```js
-const API_BASE = "https://localhost/api/user"; // Beispielbase-URL
+const client = new Client();
 
-// Hilfsfunktion: HTTP Request mit JSON
-async function request(path, method = "GET", body = null, token = null) {
-  const headers = { "Content-Type": "application/json" };
-  if (token) headers["Authorization"] = `Bearer ${token}`;
+const user = new UserBuilder()
+  .setFirstName("Max")
+  .setLastName("Mustermann")
+  .setEmail("max@example.com")
+  .setPassword("geheim123")
+  .setBirthDate("1990-01-01")
+  .setPhoneNumber("0123456789")
+  .setProfilePicture("https://example.com/profile.jpg")
+  .build();
 
-  const res = await fetch(`${API_BASE}${path}`, {
-    method,
-    headers,
-    body: body ? JSON.stringify(body) : null,
-  });
+await client.createUser(user);
+```
 
-  if (!res.ok) {
-    const error = await res.text();
-    throw new Error(`HTTP ${res.status}: ${error}`);
-  }
+🔐 Hinweis: Das Passwort wird direkt im Klartext übergeben. Stelle sicher, dass du HTTPS verwendest.
 
-  if (res.status === 204) return null; // No Content
-  return await res.json();
-}
+---
 
-// Beispiel: Alle Benutzer abrufen
-async function getUsers() {
-  return await request("/");
-}
+### 🔹 Benutzer abrufen
 
-// Beispiel: Benutzer erstellen
-async function createUser(user) {
-  return await request("/", "POST", user);
-}
+#### Alle Benutzer abrufen
 
-// Beispiel: Benutzer mit JWT aktualisieren
-async function updateUser(id, user, token) {
-  return await request(`/${id}`, "PUT", user, token);
-}
+```js
+const users = await client.getUsers();
+```
 
-// Beispiel: Benutzer löschen mit JWT
-async function deleteUser(id, token) {
-  return await request(`/${id}`, "DELETE", null, token);
-}
+#### Benutzer nach E-Mail
 
-// Beispiel: Login um JWT zu erhalten
-async function login(email, password) {
-  const data = await request("/login", "POST", { email, password });
-  return data.token;
-}
+```js
+const user = await client.getUserByEmail("max@example.com");
+```
 
-// Beispielnutzung
-(async () => {
-  try {
-    // Benutzer erstellen
-    const newUser = { email: "max@example.com", name: "Max Mustermann", password: "secret123" };
-    const created = await createUser(newUser);
-    console.log("User created with ID:", created.id);
+#### Benutzer nach ID
 
-    // Login und Token holen
-    const token = await login(newUser.email, newUser.password);
-    console.log("JWT Token:", token);
-
-    // Alle Benutzer abrufen (ohne Auth)
-    const users = await getUsers();
-    console.log("Users:", users);
-
-    // Benutzer aktualisieren mit Token
-    await updateUser(created.id, { name: "Max M." }, token);
-    console.log("User updated");
-
-    // Benutzer löschen mit Token
-    await deleteUser(created.id, token);
-    console.log("User deleted");
-  } catch (e) {
-    console.error("Error:", e.message);
-  }
-})();
+```js
+const user = await client.getUserById("user_id_xyz");
 ```
 
 ---
 
-## Hinweise
+## 📦 Abhängigkeiten
 
-* Für Endpunkte, die JWT-Token erfordern, muss das Token im Header `Authorization: Bearer <token>` mitgesendet werden.
-* WebAuthn-Endpunkte sind für die Passwortlose Authentifizierung gedacht und benötigen Client-seitige Unterstützung (nicht im JS Beispiel enthalten).
-* Die API unterstützt CORS, daher können Browser-Clients direkt mit der API kommunizieren.
+* Die Kommunikation erfolgt über die `fetch`-API.
+* JSON als Austauschformat.
+* Keine Authentifizierung erforderlich (für die oben genannten Funktionen).
 
+---
+
+## 🧰 Tools
+
+* `Client`: Hauptschnittstelle zur API.
+* `UserBuilder`: Hilfsklasse zum einfachen und validierten Aufbau eines Benutzers.
+
+---
+
+## ⚠️ Validierung
+
+Der `UserBuilder` erzwingt folgende Pflichtfelder:
+
+* `firstName`
+* `lastName`
+* `email`
+* `password`
+
+Optional können angegeben werden:
+
+* `birthDate`
+* `phoneNumber`
+* `profilePicture`
+
+Falls Pflichtfelder fehlen, wird beim Aufruf von `.build()` ein Fehler geworfen.
+
+---
+
+## 📝 Beispiel-Workflow
+
+```js
+const client = new Client();
+
+try {
+  const user = new UserBuilder()
+    .setFirstName("Anna")
+    .setLastName("Beispiel")
+    .setEmail("anna@example.com")
+    .setPassword("passwort123")
+    .build();
+
+  const response = await client.createUser(user);
+  console.log("Benutzer erfolgreich erstellt:", response);
+} catch (error) {
+  console.error("Fehler beim Erstellen des Benutzers:", error);
+}
+```

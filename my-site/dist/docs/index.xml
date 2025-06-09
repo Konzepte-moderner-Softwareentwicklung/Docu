@@ -1,0 +1,836 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>My Cargonaut – Docs</title><link>https://konzepte-moderner-softwareentwicklung.github.io/Docu/docs/</link><description>Recent content in Docs on My Cargonaut</description><generator>Hugo -- gohugo.io</generator><language>de-de</language><atom:link href="https://konzepte-moderner-softwareentwicklung.github.io/Docu/docs/index.xml" rel="self" type="application/rss+xml"/><item><title/><link>https://konzepte-moderner-softwareentwicklung.github.io/Docu/docs/rating-service/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://konzepte-moderner-softwareentwicklung.github.io/Docu/docs/rating-service/</guid><description/></item><item><title/><link>https://konzepte-moderner-softwareentwicklung.github.io/Docu/docs/tracking-service/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://konzepte-moderner-softwareentwicklung.github.io/Docu/docs/tracking-service/</guid><description/></item><item><title>Angebot Service</title><link>https://konzepte-moderner-softwareentwicklung.github.io/Docu/docs/offer-service/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://konzepte-moderner-softwareentwicklung.github.io/Docu/docs/offer-service/</guid><description>
+&lt;p>Dieser Service ermöglicht das Erstellen, Abrufen und Filtern von Angeboten über eine einfache REST-API. Er unterstützt strukturierte Angebotsobjekte mithilfe von Builder-Pattern-Klassen und basiert auf einer tokenbasierten Authentifizierung.&lt;/p>
+&lt;h2>🛠️ Installation&lt;span class="hx-absolute -hx-mt-20" id="-installation">&lt;/span>
+&lt;a href="#-installation" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;ol>
+&lt;li>
+&lt;p>Binde die &lt;code>Client&lt;/code>, &lt;code>OfferBuilder&lt;/code>, &lt;code>SpaceBuilder&lt;/code>, &lt;code>ItemBuilder&lt;/code>, etc. Klassen in deinem Frontend ein.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Stelle sicher, dass ein Backend mit folgenden Routen verfügbar ist:&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>POST /api/angebot&lt;/code>&lt;/li>
+&lt;li>&lt;code>GET /api/angebot/:id&lt;/code>&lt;/li>
+&lt;li>&lt;code>POST /api/angebot/filter&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ol>
+&lt;hr>
+&lt;h2>🚀 Verwendung&lt;span class="hx-absolute -hx-mt-20" id="-verwendung">&lt;/span>
+&lt;a href="#-verwendung" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;h3>✅ Angebot erstellen&lt;span class="hx-absolute -hx-mt-20" id="-angebot-erstellen">&lt;/span>
+&lt;a href="#-angebot-erstellen" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-js" data-lang="js">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#a6e22e">client&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">new&lt;/span> &lt;span style="color:#a6e22e">Client&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">await&lt;/span> &lt;span style="color:#a6e22e">client&lt;/span>.&lt;span style="color:#a6e22e">login&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;user@example.com&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;password&amp;#34;&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#a6e22e">size&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">new&lt;/span> &lt;span style="color:#a6e22e">SizeBuilder&lt;/span>().&lt;span style="color:#a6e22e">setWidth&lt;/span>(&lt;span style="color:#ae81ff">100&lt;/span>).&lt;span style="color:#a6e22e">setHeight&lt;/span>(&lt;span style="color:#ae81ff">50&lt;/span>).&lt;span style="color:#a6e22e">setDepth&lt;/span>(&lt;span style="color:#ae81ff">30&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#a6e22e">item&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">new&lt;/span> &lt;span style="color:#a6e22e">ItemBuilder&lt;/span>().&lt;span style="color:#a6e22e">setSize&lt;/span>(&lt;span style="color:#a6e22e">size&lt;/span>).&lt;span style="color:#a6e22e">setWeight&lt;/span>(&lt;span style="color:#ae81ff">15&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#a6e22e">space&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">new&lt;/span> &lt;span style="color:#a6e22e">SpaceBuilder&lt;/span>().&lt;span style="color:#a6e22e">addItem&lt;/span>(&lt;span style="color:#a6e22e">item&lt;/span>).&lt;span style="color:#a6e22e">setSeats&lt;/span>(&lt;span style="color:#ae81ff">2&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#a6e22e">locationFrom&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">new&lt;/span> &lt;span style="color:#a6e22e">LocationBuilder&lt;/span>().&lt;span style="color:#a6e22e">setLatitude&lt;/span>(&lt;span style="color:#ae81ff">52.52&lt;/span>).&lt;span style="color:#a6e22e">setLongitude&lt;/span>(&lt;span style="color:#ae81ff">13.405&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#a6e22e">locationTo&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">new&lt;/span> &lt;span style="color:#a6e22e">LocationBuilder&lt;/span>().&lt;span style="color:#a6e22e">setLatitude&lt;/span>(&lt;span style="color:#ae81ff">48.1351&lt;/span>).&lt;span style="color:#a6e22e">setLongitude&lt;/span>(&lt;span style="color:#ae81ff">11.582&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#a6e22e">offer&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">new&lt;/span> &lt;span style="color:#a6e22e">OfferBuilder&lt;/span>()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .&lt;span style="color:#a6e22e">setTitle&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;Transport für Möbel&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .&lt;span style="color:#a6e22e">setDescription&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;Ich kann dein Sofa mitnehmen.&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .&lt;span style="color:#a6e22e">setPrice&lt;/span>(&lt;span style="color:#ae81ff">50&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .&lt;span style="color:#a6e22e">setLocationFrom&lt;/span>(&lt;span style="color:#a6e22e">locationFrom&lt;/span>.&lt;span style="color:#a6e22e">build&lt;/span>())
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .&lt;span style="color:#a6e22e">setLocationTo&lt;/span>(&lt;span style="color:#a6e22e">locationTo&lt;/span>.&lt;span style="color:#a6e22e">build&lt;/span>())
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .&lt;span style="color:#a6e22e">setStartDateTime&lt;/span>(&lt;span style="color:#66d9ef">new&lt;/span> Date().&lt;span style="color:#a6e22e">toISOString&lt;/span>())
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .&lt;span style="color:#a6e22e">setEndDateTime&lt;/span>(&lt;span style="color:#66d9ef">new&lt;/span> Date(Date.&lt;span style="color:#a6e22e">now&lt;/span>() &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#ae81ff">3600000&lt;/span>).&lt;span style="color:#a6e22e">toISOString&lt;/span>())
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .&lt;span style="color:#a6e22e">setCanTransport&lt;/span>(&lt;span style="color:#a6e22e">space&lt;/span>.&lt;span style="color:#a6e22e">build&lt;/span>())
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .&lt;span style="color:#a6e22e">build&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">await&lt;/span> &lt;span style="color:#a6e22e">client&lt;/span>.&lt;span style="color:#a6e22e">createOffer&lt;/span>(&lt;span style="color:#a6e22e">offer&lt;/span>);&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;hr>
+&lt;h3>🔍 Angebote filtern&lt;span class="hx-absolute -hx-mt-20" id="-angebote-filtern">&lt;/span>
+&lt;a href="#-angebote-filtern" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-js" data-lang="js">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#a6e22e">filter&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">new&lt;/span> &lt;span style="color:#a6e22e">FilterBuilder&lt;/span>()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .&lt;span style="color:#a6e22e">setNameStartsWith&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;Transport&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .&lt;span style="color:#a6e22e">setLocationFrom&lt;/span>(&lt;span style="color:#a6e22e">locationFrom&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .&lt;span style="color:#a6e22e">setLocationTo&lt;/span>(&lt;span style="color:#a6e22e">locationTo&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .&lt;span style="color:#a6e22e">build&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#a6e22e">results&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">await&lt;/span> &lt;span style="color:#a6e22e">client&lt;/span>.&lt;span style="color:#a6e22e">getOffersByFilter&lt;/span>(&lt;span style="color:#a6e22e">filter&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">console&lt;/span>.&lt;span style="color:#a6e22e">log&lt;/span>(&lt;span style="color:#a6e22e">results&lt;/span>);&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;hr>
+&lt;h3>📄 Angebot abrufen&lt;span class="hx-absolute -hx-mt-20" id="-angebot-abrufen">&lt;/span>
+&lt;a href="#-angebot-abrufen" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-js" data-lang="js">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#a6e22e">offer&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">await&lt;/span> &lt;span style="color:#a6e22e">client&lt;/span>.&lt;span style="color:#a6e22e">getOfferById&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;angebot-id-123&amp;#34;&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">console&lt;/span>.&lt;span style="color:#a6e22e">log&lt;/span>(&lt;span style="color:#a6e22e">offer&lt;/span>);&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;hr>
+&lt;h2>🧱 Builder-Klassen&lt;span class="hx-absolute -hx-mt-20" id="-builder-klassen">&lt;/span>
+&lt;a href="#-builder-klassen" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Klasse&lt;/th>
+&lt;th>Zweck&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>OfferBuilder&lt;/code>&lt;/td>
+&lt;td>Erstellen eines vollständigen Angebots&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>SpaceBuilder&lt;/code>&lt;/td>
+&lt;td>Beschreibt den verfügbaren Platz&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>ItemBuilder&lt;/code>&lt;/td>
+&lt;td>Einzelnes zu transportierendes Objekt&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>SizeBuilder&lt;/code>&lt;/td>
+&lt;td>Dimensionen eines Items&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>LocationBuilder&lt;/code>&lt;/td>
+&lt;td>Geografische Koordinaten&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>FilterBuilder&lt;/code>&lt;/td>
+&lt;td>Filterkriterien für Angebotssuche&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>Jede &lt;code>build()&lt;/code>-Methode validiert automatisch alle Pflichtfelder und wirft bei Fehlern eine aussagekräftige Exception.&lt;/p>
+&lt;hr>
+&lt;h2>🌐 API-Endpunkte&lt;span class="hx-absolute -hx-mt-20" id="-api-endpunkte">&lt;/span>
+&lt;a href="#-api-endpunkte" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Methode&lt;/th>
+&lt;th>Pfad&lt;/th>
+&lt;th>Beschreibung&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>POST&lt;/td>
+&lt;td>&lt;code>/api/angebot&lt;/code>&lt;/td>
+&lt;td>Erstellt ein neues Angebot&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>GET&lt;/td>
+&lt;td>&lt;code>/api/angebot/:id&lt;/code>&lt;/td>
+&lt;td>Holt ein Angebot per ID&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>POST&lt;/td>
+&lt;td>&lt;code>/api/angebot/filter&lt;/code>&lt;/td>
+&lt;td>Holt eine Liste gefilterter Angebote&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;hr>
+&lt;h2>⚠️ Fehlerbehandlung&lt;span class="hx-absolute -hx-mt-20" id="-fehlerbehandlung">&lt;/span>
+&lt;a href="#-fehlerbehandlung" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Alle HTTP-Aufrufe werfen Exceptions bei Fehlschlägen. Fehlermeldungen werden als &lt;code>Error&lt;/code>-Objekte mit Statuscodes und Text bereitgestellt:&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-js" data-lang="js">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">try&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">await&lt;/span> &lt;span style="color:#a6e22e">client&lt;/span>.&lt;span style="color:#a6e22e">createOffer&lt;/span>(&lt;span style="color:#a6e22e">myOffer&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>} &lt;span style="color:#66d9ef">catch&lt;/span> (&lt;span style="color:#a6e22e">err&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">console&lt;/span>.&lt;span style="color:#a6e22e">error&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;Fehler beim Erstellen des Angebots:&amp;#34;&lt;/span>, &lt;span style="color:#a6e22e">err&lt;/span>.&lt;span style="color:#a6e22e">message&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;hr>
+&lt;h2>🔐 Authentifizierung&lt;span class="hx-absolute -hx-mt-20" id="-authentifizierung">&lt;/span>
+&lt;a href="#-authentifizierung" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Der Nutzer muss vor dem Erstellen eines Angebots angemeldet sein. Ein gültiges Token wird intern vom &lt;code>Client&lt;/code> verwaltet:&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-js" data-lang="js">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">await&lt;/span> &lt;span style="color:#a6e22e">client&lt;/span>.&lt;span style="color:#a6e22e">login&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;email&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;password&amp;#34;&lt;/span>); &lt;span style="color:#75715e">// Token wird automatisch gesetzt
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;hr>
+&lt;h2>💬 WebSocket Integration (optional)&lt;span class="hx-absolute -hx-mt-20" id="-websocket-integration-optional">&lt;/span>
+&lt;a href="#-websocket-integration-optional" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Nach erfolgreicher Anmeldung wird automatisch ein WebSocket geöffnet, z.B. für Echtzeitkommunikation:&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-js" data-lang="js">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">client&lt;/span>.&lt;span style="color:#a6e22e">registerOnMessage&lt;/span>((&lt;span style="color:#a6e22e">msg&lt;/span>) =&amp;gt; {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">console&lt;/span>.&lt;span style="color:#a6e22e">log&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;Neue Nachricht:&amp;#34;&lt;/span>, &lt;span style="color:#a6e22e">msg&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>});&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div></description></item><item><title>Gateway</title><link>https://konzepte-moderner-softwareentwicklung.github.io/Docu/docs/gateway/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://konzepte-moderner-softwareentwicklung.github.io/Docu/docs/gateway/</guid><description>
+&lt;h1>Gateway Service - Dokumentation&lt;/h1>&lt;p>Der Gateway-Service ist ein zentraler HTTP-Proxy, der eingehende Anfragen basierend auf dem URL-Pfad an die jeweils zuständigen Microservices weiterleitet.&lt;/p>
+&lt;hr>
+&lt;h2>Zweck&lt;span class="hx-absolute -hx-mt-20" id="zweck">&lt;/span>
+&lt;a href="#zweck" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;ul>
+&lt;li>Zentrale Anlaufstelle für Clients&lt;/li>
+&lt;li>Weiterleitung von HTTP-Anfragen an Microservices&lt;/li>
+&lt;li>Einfaches Routing basierend auf URL-Präfixen&lt;/li>
+&lt;li>Einheitliche Schnittstelle für mehrere Backend-Services&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h2>Routing-Regeln&lt;span class="hx-absolute -hx-mt-20" id="routing-regeln">&lt;/span>
+&lt;a href="#routing-regeln" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>URL-Pfad-Präfix&lt;/th>
+&lt;th>Zielservice&lt;/th>
+&lt;th>Beschreibung&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>api/user/*&lt;/code>&lt;/td>
+&lt;td>User-Service (z.B. &lt;code>http://userservice:8080&lt;/code>)&lt;/td>
+&lt;td>Benutzerverwaltung&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>api/angebot/*&lt;/code>&lt;/td>
+&lt;td>Angebot-Service (z.B. &lt;code>http://angebotservice:8080&lt;/code>)&lt;/td>
+&lt;td>Angebotsverwaltung&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>api/media/*&lt;/code>&lt;/td>
+&lt;td>Media-Service (z.B. &lt;code>http://mediaservice:8080&lt;/code>)&lt;/td>
+&lt;td>Medienverwaltung&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>/&lt;/code> (andere)&lt;/td>
+&lt;td>Frontend oder 404-Fehler&lt;/td>
+&lt;td>Standardseite oder Fehlerseite&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;hr>
+&lt;h2>Nutzung als Client&lt;span class="hx-absolute -hx-mt-20" id="nutzung-als-client">&lt;/span>
+&lt;a href="#nutzung-als-client" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Clients senden alle Anfragen an das Gateway (z.B. &lt;code>https://localhost/api&lt;/code>). Das Gateway sorgt automatisch dafür, dass die Anfragen beim richtigen Service landen.&lt;/p>
+&lt;hr>
+&lt;h2>Beispiel-Endpunkte (über Gateway)&lt;span class="hx-absolute -hx-mt-20" id="beispiel-endpunkte-über-gateway">&lt;/span>
+&lt;a href="#beispiel-endpunkte-%c3%bcber-gateway" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>HTTP Methode&lt;/th>
+&lt;th>Pfad&lt;/th>
+&lt;th>Zweck&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>GET&lt;/td>
+&lt;td>&lt;code>api/user/&lt;/code>&lt;/td>
+&lt;td>Liste aller Benutzer abrufen&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>POST&lt;/td>
+&lt;td>&lt;code>api/user/&lt;/code>&lt;/td>
+&lt;td>Neuen Benutzer anlegen&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>PUT&lt;/td>
+&lt;td>&lt;code>api/user/{id}&lt;/code>&lt;/td>
+&lt;td>Benutzer aktualisieren&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>DELETE&lt;/td>
+&lt;td>&lt;code>api/user/{id}&lt;/code>&lt;/td>
+&lt;td>Benutzer löschen&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>GET&lt;/td>
+&lt;td>&lt;code>api/angebot/&lt;/code>&lt;/td>
+&lt;td>Angebote abrufen&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>GET&lt;/td>
+&lt;td>&lt;code>api/media/{id}&lt;/code>&lt;/td>
+&lt;td>Mediendatei abrufen&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>GET&lt;/td>
+&lt;td>&lt;code>/&lt;/code>&lt;/td>
+&lt;td>Frontend oder Startseite&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;hr>
+&lt;h2>Vorteile&lt;span class="hx-absolute -hx-mt-20" id="vorteile">&lt;/span>
+&lt;a href="#vorteile" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;ul>
+&lt;li>&lt;strong>Vereinfachte Client-Integration:&lt;/strong> Ein einziger Endpunkt für alle Services&lt;/li>
+&lt;li>&lt;strong>Flexibles Routing:&lt;/strong> Einfaches Hinzufügen neuer Services und Pfade&lt;/li>
+&lt;li>&lt;strong>Zentrale Sicherheitskontrolle:&lt;/strong> Authentifizierung, Logging oder Rate-Limiting können hier zentral implementiert werden&lt;/li>
+&lt;li>&lt;strong>Entkopplung der Clients von den Backend-Services&lt;/strong>&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h2>Beispiel Client-Code (JavaScript)&lt;span class="hx-absolute -hx-mt-20" id="beispiel-client-code-javascript">&lt;/span>
+&lt;a href="#beispiel-client-code-javascript" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-js" data-lang="js">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#a6e22e">BASE_URL&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#34;https://localhost&amp;#34;&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// Benutzerliste abrufen
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>&lt;span style="color:#66d9ef">async&lt;/span> &lt;span style="color:#66d9ef">function&lt;/span> &lt;span style="color:#a6e22e">fetchUsers&lt;/span>() {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#a6e22e">response&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">await&lt;/span> &lt;span style="color:#a6e22e">fetch&lt;/span>(&lt;span style="color:#e6db74">`&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>&lt;span style="color:#a6e22e">BASE_URL&lt;/span>&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">/users/`&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> (&lt;span style="color:#f92672">!&lt;/span>&lt;span style="color:#a6e22e">response&lt;/span>.&lt;span style="color:#a6e22e">ok&lt;/span>) &lt;span style="color:#66d9ef">throw&lt;/span> &lt;span style="color:#66d9ef">new&lt;/span> Error(&lt;span style="color:#e6db74">&amp;#34;Fehler beim Abrufen der Benutzer&amp;#34;&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#a6e22e">response&lt;/span>.&lt;span style="color:#a6e22e">json&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// Benutzer erstellen
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>&lt;span style="color:#66d9ef">async&lt;/span> &lt;span style="color:#66d9ef">function&lt;/span> &lt;span style="color:#a6e22e">createUser&lt;/span>(&lt;span style="color:#a6e22e">userData&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#a6e22e">response&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">await&lt;/span> &lt;span style="color:#a6e22e">fetch&lt;/span>(&lt;span style="color:#e6db74">`&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>&lt;span style="color:#a6e22e">BASE_URL&lt;/span>&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">/users/`&lt;/span>, {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">method&lt;/span>&lt;span style="color:#f92672">:&lt;/span> &lt;span style="color:#e6db74">&amp;#34;POST&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">headers&lt;/span>&lt;span style="color:#f92672">:&lt;/span> { &lt;span style="color:#e6db74">&amp;#34;Content-Type&amp;#34;&lt;/span>&lt;span style="color:#f92672">:&lt;/span> &lt;span style="color:#e6db74">&amp;#34;application/json&amp;#34;&lt;/span> },
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">body&lt;/span>&lt;span style="color:#f92672">:&lt;/span> &lt;span style="color:#a6e22e">JSON&lt;/span>.&lt;span style="color:#a6e22e">stringify&lt;/span>(&lt;span style="color:#a6e22e">userData&lt;/span>),
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> });
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> (&lt;span style="color:#f92672">!&lt;/span>&lt;span style="color:#a6e22e">response&lt;/span>.&lt;span style="color:#a6e22e">ok&lt;/span>) &lt;span style="color:#66d9ef">throw&lt;/span> &lt;span style="color:#66d9ef">new&lt;/span> Error(&lt;span style="color:#e6db74">&amp;#34;Fehler beim Erstellen des Benutzers&amp;#34;&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#a6e22e">response&lt;/span>.&lt;span style="color:#a6e22e">json&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// Angebot abrufen
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>&lt;span style="color:#66d9ef">async&lt;/span> &lt;span style="color:#66d9ef">function&lt;/span> &lt;span style="color:#a6e22e">fetchAngebote&lt;/span>() {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#a6e22e">response&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">await&lt;/span> &lt;span style="color:#a6e22e">fetch&lt;/span>(&lt;span style="color:#e6db74">`&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>&lt;span style="color:#a6e22e">BASE_URL&lt;/span>&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">/angebote/`&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> (&lt;span style="color:#f92672">!&lt;/span>&lt;span style="color:#a6e22e">response&lt;/span>.&lt;span style="color:#a6e22e">ok&lt;/span>) &lt;span style="color:#66d9ef">throw&lt;/span> &lt;span style="color:#66d9ef">new&lt;/span> Error(&lt;span style="color:#e6db74">&amp;#34;Fehler beim Abrufen der Angebote&amp;#34;&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#a6e22e">response&lt;/span>.&lt;span style="color:#a6e22e">json&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div></description></item><item><title>Login</title><link>https://konzepte-moderner-softwareentwicklung.github.io/Docu/docs/login/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://konzepte-moderner-softwareentwicklung.github.io/Docu/docs/login/</guid><description>
+&lt;p>Dieser Service ermöglicht es Benutzern, sich über E-Mail/Passwort oder passwortlos via WebAuthn (Passkey) anzumelden. Die Authentifizierung erzeugt ein Token, das für nachfolgende geschützte Anfragen benötigt wird.&lt;/p>
+&lt;h2>📥 Klassische Anmeldung: E-Mail &amp;amp; Passwort&lt;span class="hx-absolute -hx-mt-20" id="-klassische-anmeldung-e-mail--passwort">&lt;/span>
+&lt;a href="#-klassische-anmeldung-e-mail--passwort" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;h3>🔧 Methode&lt;span class="hx-absolute -hx-mt-20" id="-methode">&lt;/span>
+&lt;a href="#-methode" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-js" data-lang="js">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">await&lt;/span> &lt;span style="color:#a6e22e">client&lt;/span>.&lt;span style="color:#a6e22e">login&lt;/span>(&lt;span style="color:#a6e22e">email&lt;/span>, &lt;span style="color:#a6e22e">password&lt;/span>);&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;h3>🧾 Beschreibung&lt;span class="hx-absolute -hx-mt-20" id="-beschreibung">&lt;/span>
+&lt;a href="#-beschreibung" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Authentifiziert einen Benutzer mit E-Mail und Passwort. Beim Erfolg wird automatisch ein Authentifizierungstoken gespeichert und eine WebSocket-Verbindung geöffnet.&lt;/p>
+&lt;h3>📌 Parameter&lt;span class="hx-absolute -hx-mt-20" id="-parameter">&lt;/span>
+&lt;a href="#-parameter" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Name&lt;/th>
+&lt;th>Typ&lt;/th>
+&lt;th>Beschreibung&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>email&lt;/code>&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>Benutzer-E-Mail&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>password&lt;/code>&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>Benutzerpasswort&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h3>✅ Beispiel&lt;span class="hx-absolute -hx-mt-20" id="-beispiel">&lt;/span>
+&lt;a href="#-beispiel" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-js" data-lang="js">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">await&lt;/span> &lt;span style="color:#a6e22e">client&lt;/span>.&lt;span style="color:#a6e22e">login&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;benutzer@example.com&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;meinPasswort123&amp;#34;&lt;/span>);&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;h3>⚠️ Fehlerbehandlung&lt;span class="hx-absolute -hx-mt-20" id="-fehlerbehandlung">&lt;/span>
+&lt;a href="#-fehlerbehandlung" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Falls die Anmeldung fehlschlägt, wird eine aussagekräftige Fehlermeldung ausgelöst.&lt;/p>
+&lt;hr>
+&lt;h2>🔐 Passwortlos anmelden mit Passkey (WebAuthn)&lt;span class="hx-absolute -hx-mt-20" id="-passwortlos-anmelden-mit-passkey-webauthn">&lt;/span>
+&lt;a href="#-passwortlos-anmelden-mit-passkey-webauthn" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;h3>🔧 Methode&lt;span class="hx-absolute -hx-mt-20" id="-methode-1">&lt;/span>
+&lt;a href="#-methode-1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-js" data-lang="js">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">await&lt;/span> &lt;span style="color:#a6e22e">client&lt;/span>.&lt;span style="color:#a6e22e">loginPasskey&lt;/span>(&lt;span style="color:#a6e22e">email&lt;/span>);&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;h3>🧾 Beschreibung&lt;span class="hx-absolute -hx-mt-20" id="-beschreibung-1">&lt;/span>
+&lt;a href="#-beschreibung-1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Führt eine passwortlose Anmeldung per Passkey (z. B. FaceID, TouchID, FIDO2-Sicherheitsschlüssel) durch. Diese Methode nutzt den WebAuthn-Standard zur sicheren Authentifizierung.&lt;/p>
+&lt;h3>📌 Parameter&lt;span class="hx-absolute -hx-mt-20" id="-parameter-1">&lt;/span>
+&lt;a href="#-parameter-1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Name&lt;/th>
+&lt;th>Typ&lt;/th>
+&lt;th>Beschreibung&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>email&lt;/code>&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>Die registrierte Benutzer-E-Mail&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h3>✅ Beispiel&lt;span class="hx-absolute -hx-mt-20" id="-beispiel-1">&lt;/span>
+&lt;a href="#-beispiel-1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-js" data-lang="js">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">await&lt;/span> &lt;span style="color:#a6e22e">client&lt;/span>.&lt;span style="color:#a6e22e">loginPasskey&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;benutzer@example.com&amp;#34;&lt;/span>);&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;h3>🔄 Ablauf&lt;span class="hx-absolute -hx-mt-20" id="-ablauf">&lt;/span>
+&lt;a href="#-ablauf" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ol>
+&lt;li>Holt Anmeldeoptionen vom Server (&lt;code>/api/user/webauthn/login/options&lt;/code>).&lt;/li>
+&lt;li>Führt WebAuthn-Authentifizierung durch.&lt;/li>
+&lt;li>Sendet Authentifizierungsdaten an den Server zur Verifikation (&lt;code>/api/user/webauthn/login&lt;/code>).&lt;/li>
+&lt;li>Speichert Token und verbindet WebSocket.&lt;/li>
+&lt;/ol>
+&lt;h3>⚠️ Fehlerbehandlung&lt;span class="hx-absolute -hx-mt-20" id="-fehlerbehandlung-1">&lt;/span>
+&lt;a href="#-fehlerbehandlung-1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ul>
+&lt;li>Ungültige E-Mail: Es wird eine Exception geworfen.&lt;/li>
+&lt;li>Abbruch oder Verweigerung der WebAuthn-Anfrage durch den Benutzer führt zu einem Fehler.&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h2>🌐 WebSocket-Verbindung&lt;span class="hx-absolute -hx-mt-20" id="-websocket-verbindung">&lt;/span>
+&lt;a href="#-websocket-verbindung" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Nach erfolgreichem Login (egal ob klassisch oder per Passkey) wird eine WebSocket-Verbindung automatisch aufgebaut:&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-js" data-lang="js">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">client&lt;/span>.&lt;span style="color:#a6e22e">connectWebSocket&lt;/span>();&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>Dies ermöglicht z. B. serverseitige Push-Nachrichten in Echtzeit.&lt;/p>
+&lt;hr>
+&lt;h2>🧪 Token-Nutzung&lt;span class="hx-absolute -hx-mt-20" id="-token-nutzung">&lt;/span>
+&lt;a href="#-token-nutzung" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Das erhaltene Token wird in &lt;code>client.token&lt;/code> gespeichert und automatisch in geschützten API-Requests (z. B. Angebotserstellung) verwendet.&lt;/p>
+&lt;hr>
+&lt;h2>📤 Logout&lt;span class="hx-absolute -hx-mt-20" id="-logout">&lt;/span>
+&lt;a href="#-logout" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;h3>🔧 Methode&lt;span class="hx-absolute -hx-mt-20" id="-methode-2">&lt;/span>
+&lt;a href="#-methode-2" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-js" data-lang="js">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">await&lt;/span> &lt;span style="color:#a6e22e">client&lt;/span>.&lt;span style="color:#a6e22e">logout&lt;/span>();&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;h3>Beschreibung&lt;span class="hx-absolute -hx-mt-20" id="beschreibung">&lt;/span>
+&lt;a href="#beschreibung" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ul>
+&lt;li>Setzt das Token zurück.&lt;/li>
+&lt;li>Trennt die WebSocket-Verbindung.&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h2>🔒 Sicherheitshinweise&lt;span class="hx-absolute -hx-mt-20" id="-sicherheitshinweise">&lt;/span>
+&lt;a href="#-sicherheitshinweise" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;ul>
+&lt;li>Alle Passkey-bezogenen Anfragen verwenden &lt;code>credentials: &amp;quot;include&amp;quot;&lt;/code> und CORS-Modus.&lt;/li>
+&lt;li>Die Anmeldedaten werden &lt;strong>nicht im Klartext&lt;/strong> übertragen.&lt;/li>
+&lt;li>Die WebAuthn-Authentifizierung erfolgt vollständig im Browser.&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h2>📚 Weitere Methoden&lt;span class="hx-absolute -hx-mt-20" id="-weitere-methoden">&lt;/span>
+&lt;a href="#-weitere-methoden" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Für Registrierung mit Passkey siehe:&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-js" data-lang="js">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">await&lt;/span> &lt;span style="color:#a6e22e">client&lt;/span>.&lt;span style="color:#a6e22e">registerPasskey&lt;/span>();&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>Für Benutzer-Management siehe Methoden wie &lt;code>getUsers()&lt;/code>, &lt;code>createUser()&lt;/code>, etc.&lt;/p></description></item><item><title>Media Service</title><link>https://konzepte-moderner-softwareentwicklung.github.io/Docu/docs/media-service/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://konzepte-moderner-softwareentwicklung.github.io/Docu/docs/media-service/</guid><description>
+&lt;h1>Media Service - Dokumentation&lt;/h1>&lt;p>Der Media Service stellt Endpunkte zum Upload und Download von Bildern bereit und verwaltet einzelne sowie mehrere (komplexe) Bild-Links.&lt;/p>
+&lt;hr>
+&lt;h2>Basis-URL&lt;span class="hx-absolute -hx-mt-20" id="basis-url">&lt;/span>
+&lt;a href="#basis-url" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>&lt;code>/media&lt;/code>&lt;/p>
+&lt;hr>
+&lt;h2>Endpunkte&lt;span class="hx-absolute -hx-mt-20" id="endpunkte">&lt;/span>
+&lt;a href="#endpunkte" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;h3>1. &lt;code>GET /media/image&lt;/code>&lt;span class="hx-absolute -hx-mt-20" id="1-get-mediaimage">&lt;/span>
+&lt;a href="#1-get-mediaimage" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ul>
+&lt;li>&lt;strong>Beschreibung:&lt;/strong> Test- oder Index-Endpunkt, gibt &amp;ldquo;Hello World&amp;rdquo; zurück.&lt;/li>
+&lt;li>&lt;strong>Request Body:&lt;/strong> Kein&lt;/li>
+&lt;li>&lt;strong>Response:&lt;/strong> Plain Text &lt;code>&amp;quot;Hello World&amp;quot;&lt;/code>&lt;/li>
+&lt;li>&lt;strong>Status Codes:&lt;/strong> 200 OK&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h3>2. &lt;code>POST /media/image&lt;/code>&lt;span class="hx-absolute -hx-mt-20" id="2-post-mediaimage">&lt;/span>
+&lt;a href="#2-post-mediaimage" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ul>
+&lt;li>
+&lt;p>&lt;strong>Beschreibung:&lt;/strong> Upload eines einzelnen Bildes.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Request Header:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>Content-Type&lt;/code>: Muss den Medientyp des Bildes angeben (z.B. &lt;code>image/jpeg&lt;/code>).&lt;/li>
+&lt;li>&lt;code>UserId&lt;/code>: ID des hochladenden Benutzers (wird als Header erwartet).&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Request Body:&lt;/strong> Binärdaten des Bildes.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Response Body (JSON):&lt;/strong>&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>{
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;name&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;string&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;success&amp;#34;&lt;/span>: &lt;span style="color:#66d9ef">true&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Status Codes:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>200 OK bei Erfolg&lt;/li>
+&lt;li>400 Bad Request, wenn Content-Type oder UserId fehlt&lt;/li>
+&lt;li>500 Internal Server Error bei Upload-Fehlern&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h3>3. &lt;code>GET /media/image/{id}&lt;/code>&lt;span class="hx-absolute -hx-mt-20" id="3-get-mediaimageid">&lt;/span>
+&lt;a href="#3-get-mediaimageid" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ul>
+&lt;li>
+&lt;p>&lt;strong>Beschreibung:&lt;/strong> Download eines Bildes nach Bild-ID (Name).&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>URL-Parameter:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>id&lt;/code> (string): Bildname/ID.&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Response:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>Bilddaten mit Header &lt;code>Content-Type: image/jpeg&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Status Codes:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>200 OK bei Erfolg&lt;/li>
+&lt;li>400 Bad Request, wenn &lt;code>id&lt;/code> fehlt&lt;/li>
+&lt;li>500 Internal Server Error bei Fehlern&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h3>4. &lt;code>GET /media/multi/{id}&lt;/code>&lt;span class="hx-absolute -hx-mt-20" id="4-get-mediamultiid">&lt;/span>
+&lt;a href="#4-get-mediamultiid" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ul>
+&lt;li>
+&lt;p>&lt;strong>Beschreibung:&lt;/strong> Gibt eine Liste von Bild-URLs (compound links) zurück, die zu einer zusammengesetzten Entität gehören.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>URL-Parameter:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>id&lt;/code> (UUID): ID der zusammengesetzten Entität.&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Response Body (JSON):&lt;/strong> Array von URLs, z.B.&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>[
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;/media/image/abc123&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;/media/image/def456&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>]&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Status Codes:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>200 OK bei Erfolg&lt;/li>
+&lt;li>400 Bad Request, wenn &lt;code>id&lt;/code> fehlt oder ungültig ist&lt;/li>
+&lt;li>500 Internal Server Error bei Fehlern&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h3>5. &lt;code>POST /media/multi/{id}&lt;/code>&lt;span class="hx-absolute -hx-mt-20" id="5-post-mediamultiid">&lt;/span>
+&lt;a href="#5-post-mediamultiid" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ul>
+&lt;li>
+&lt;p>&lt;strong>Beschreibung:&lt;/strong> Upload eines Bildes zu einer zusammengesetzten Entität.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>URL-Parameter:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>id&lt;/code> (string): ID der zusammengesetzten Entität.&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Request Header:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>Content-Type&lt;/code>: Medientyp des Bildes&lt;/li>
+&lt;li>&lt;code>UserId&lt;/code>: ID des Benutzers (muss gesetzt sein)&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Request Body:&lt;/strong> Binärdaten des Bildes&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Response:&lt;/strong> Kein Body, nur Status-Code&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Status Codes:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>200 OK bei Erfolg&lt;/li>
+&lt;li>400 Bad Request bei fehlenden Headern oder Parametern&lt;/li>
+&lt;li>500 Internal Server Error bei Upload-Fehlern&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h2>Header&lt;span class="hx-absolute -hx-mt-20" id="header">&lt;/span>
+&lt;a href="#header" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Header&lt;/th>
+&lt;th>Bedeutung&lt;/th>
+&lt;th>Erforderlich?&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>UserId&lt;/code>&lt;/td>
+&lt;td>ID des Nutzers, der hochlädt&lt;/td>
+&lt;td>Ja bei Uploads&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;hr>
+&lt;h2>Fehlerhandling&lt;span class="hx-absolute -hx-mt-20" id="fehlerhandling">&lt;/span>
+&lt;a href="#fehlerhandling" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;ul>
+&lt;li>400 Bad Request bei ungültigen oder fehlenden Parametern oder Headern.&lt;/li>
+&lt;li>500 Internal Server Error bei internen Fehlern.&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h2>Beispiel Curl Upload (einzelnes Bild)&lt;span class="hx-absolute -hx-mt-20" id="beispiel-curl-upload-einzelnes-bild">&lt;/span>
+&lt;a href="#beispiel-curl-upload-einzelnes-bild" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>curl -X POST https://localhost/api/media/image &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> -H &lt;span style="color:#e6db74">&amp;#34;Content-Type: image/jpeg&amp;#34;&lt;/span> &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> -H &lt;span style="color:#e6db74">&amp;#34;UserId: 1234&amp;#34;&lt;/span> &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> --data-binary &lt;span style="color:#e6db74">&amp;#34;@pfad/zum/bild.jpg&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;hr>
+&lt;h2>Beispiel Curl Download (Bild)&lt;span class="hx-absolute -hx-mt-20" id="beispiel-curl-download-bild">&lt;/span>
+&lt;a href="#beispiel-curl-download-bild" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>curl https://localhost/media/image/abc123 &amp;gt; downloaded.jpg&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div></description></item><item><title>User Service</title><link>https://konzepte-moderner-softwareentwicklung.github.io/Docu/docs/user-service/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://konzepte-moderner-softwareentwicklung.github.io/Docu/docs/user-service/</guid><description>
+&lt;p>Dieser Service ermöglicht das &lt;strong>Anlegen und Abrufen von Benutzern&lt;/strong> über eine einfache API. Die Authentifizierung (Login, Token, WebAuthn) ist hierbei &lt;strong>nicht erforderlich&lt;/strong>.&lt;/p>
+&lt;h2>🚀 Funktionen&lt;span class="hx-absolute -hx-mt-20" id="-funktionen">&lt;/span>
+&lt;a href="#-funktionen" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;h3>🔹 Benutzer anlegen&lt;span class="hx-absolute -hx-mt-20" id="-benutzer-anlegen">&lt;/span>
+&lt;a href="#-benutzer-anlegen" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Verwende den bereitgestellten &lt;code>UserBuilder&lt;/code>, um einen neuen Benutzer zu erstellen. Dies ist ohne vorherige Anmeldung möglich.&lt;/p>
+&lt;h4>Beispiel:&lt;span class="hx-absolute -hx-mt-20" id="beispiel">&lt;/span>
+&lt;a href="#beispiel" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-js" data-lang="js">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#a6e22e">client&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">new&lt;/span> &lt;span style="color:#a6e22e">Client&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#a6e22e">user&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">new&lt;/span> &lt;span style="color:#a6e22e">UserBuilder&lt;/span>()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .&lt;span style="color:#a6e22e">setFirstName&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;Max&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .&lt;span style="color:#a6e22e">setLastName&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;Mustermann&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .&lt;span style="color:#a6e22e">setEmail&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;max@example.com&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .&lt;span style="color:#a6e22e">setPassword&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;geheim123&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .&lt;span style="color:#a6e22e">setBirthDate&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;1990-01-01&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .&lt;span style="color:#a6e22e">setPhoneNumber&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;0123456789&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .&lt;span style="color:#a6e22e">setProfilePicture&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;https://example.com/profile.jpg&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .&lt;span style="color:#a6e22e">build&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">await&lt;/span> &lt;span style="color:#a6e22e">client&lt;/span>.&lt;span style="color:#a6e22e">createUser&lt;/span>(&lt;span style="color:#a6e22e">user&lt;/span>);&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>🔐 Hinweis: Das Passwort wird direkt im Klartext übergeben. Stelle sicher, dass du HTTPS verwendest.&lt;/p>
+&lt;hr>
+&lt;h3>🔹 Benutzer abrufen&lt;span class="hx-absolute -hx-mt-20" id="-benutzer-abrufen">&lt;/span>
+&lt;a href="#-benutzer-abrufen" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;h4>Alle Benutzer abrufen&lt;span class="hx-absolute -hx-mt-20" id="alle-benutzer-abrufen">&lt;/span>
+&lt;a href="#alle-benutzer-abrufen" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-js" data-lang="js">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#a6e22e">users&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">await&lt;/span> &lt;span style="color:#a6e22e">client&lt;/span>.&lt;span style="color:#a6e22e">getUsers&lt;/span>();&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;h4>Benutzer nach E-Mail&lt;span class="hx-absolute -hx-mt-20" id="benutzer-nach-e-mail">&lt;/span>
+&lt;a href="#benutzer-nach-e-mail" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-js" data-lang="js">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#a6e22e">user&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">await&lt;/span> &lt;span style="color:#a6e22e">client&lt;/span>.&lt;span style="color:#a6e22e">getUserByEmail&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;max@example.com&amp;#34;&lt;/span>);&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;h4>Benutzer nach ID&lt;span class="hx-absolute -hx-mt-20" id="benutzer-nach-id">&lt;/span>
+&lt;a href="#benutzer-nach-id" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-js" data-lang="js">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#a6e22e">user&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">await&lt;/span> &lt;span style="color:#a6e22e">client&lt;/span>.&lt;span style="color:#a6e22e">getUserById&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;user_id_xyz&amp;#34;&lt;/span>);&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;hr>
+&lt;h2>📦 Abhängigkeiten&lt;span class="hx-absolute -hx-mt-20" id="-abhängigkeiten">&lt;/span>
+&lt;a href="#-abh%c3%a4ngigkeiten" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;ul>
+&lt;li>Die Kommunikation erfolgt über die &lt;code>fetch&lt;/code>-API.&lt;/li>
+&lt;li>JSON als Austauschformat.&lt;/li>
+&lt;li>Keine Authentifizierung erforderlich (für die oben genannten Funktionen).&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h2>🧰 Tools&lt;span class="hx-absolute -hx-mt-20" id="-tools">&lt;/span>
+&lt;a href="#-tools" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;ul>
+&lt;li>&lt;code>Client&lt;/code>: Hauptschnittstelle zur API.&lt;/li>
+&lt;li>&lt;code>UserBuilder&lt;/code>: Hilfsklasse zum einfachen und validierten Aufbau eines Benutzers.&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h2>⚠️ Validierung&lt;span class="hx-absolute -hx-mt-20" id="-validierung">&lt;/span>
+&lt;a href="#-validierung" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Der &lt;code>UserBuilder&lt;/code> erzwingt folgende Pflichtfelder:&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>firstName&lt;/code>&lt;/li>
+&lt;li>&lt;code>lastName&lt;/code>&lt;/li>
+&lt;li>&lt;code>email&lt;/code>&lt;/li>
+&lt;li>&lt;code>password&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;p>Optional können angegeben werden:&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>birthDate&lt;/code>&lt;/li>
+&lt;li>&lt;code>phoneNumber&lt;/code>&lt;/li>
+&lt;li>&lt;code>profilePicture&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;p>Falls Pflichtfelder fehlen, wird beim Aufruf von &lt;code>.build()&lt;/code> ein Fehler geworfen.&lt;/p>
+&lt;hr>
+&lt;h2>📝 Beispiel-Workflow&lt;span class="hx-absolute -hx-mt-20" id="-beispiel-workflow">&lt;/span>
+&lt;a href="#-beispiel-workflow" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-js" data-lang="js">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#a6e22e">client&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">new&lt;/span> &lt;span style="color:#a6e22e">Client&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">try&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#a6e22e">user&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">new&lt;/span> &lt;span style="color:#a6e22e">UserBuilder&lt;/span>()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .&lt;span style="color:#a6e22e">setFirstName&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;Anna&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .&lt;span style="color:#a6e22e">setLastName&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;Beispiel&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .&lt;span style="color:#a6e22e">setEmail&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;anna@example.com&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .&lt;span style="color:#a6e22e">setPassword&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;passwort123&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .&lt;span style="color:#a6e22e">build&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#a6e22e">response&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">await&lt;/span> &lt;span style="color:#a6e22e">client&lt;/span>.&lt;span style="color:#a6e22e">createUser&lt;/span>(&lt;span style="color:#a6e22e">user&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">console&lt;/span>.&lt;span style="color:#a6e22e">log&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;Benutzer erfolgreich erstellt:&amp;#34;&lt;/span>, &lt;span style="color:#a6e22e">response&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>} &lt;span style="color:#66d9ef">catch&lt;/span> (&lt;span style="color:#a6e22e">error&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">console&lt;/span>.&lt;span style="color:#a6e22e">error&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;Fehler beim Erstellen des Benutzers:&amp;#34;&lt;/span>, &lt;span style="color:#a6e22e">error&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div></description></item></channel></rss>
