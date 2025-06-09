@@ -1,8 +1,8 @@
 ---
 title: 'Docs'
 ---
-
-# Microservices Architecture — Docker Compose Setup!
+## Microservices Architecture — Docker Compose Setup!
+![Draw](/images/draw.png)
 
 Welcome to the documentation for the **microservices architecture** development environment! This repository includes a `docker-compose.yml` file designed to spin up all necessary services for local development.
 
