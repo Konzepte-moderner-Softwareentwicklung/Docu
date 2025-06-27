@@ -2,6 +2,70 @@
 title: 'Gateway'
 ---
 
+```mermaid
+classDiagram
+    direction TB
+
+    class Service {
+        +*server.Server
+        +*auth.AuthMiddleware
+        +*jwt.Decoder
+        +NR *natsreciver.Receiver
+        +WSHandler(w http.ResponseWriter, r *http.Request)
+        +HandleChatWS(w http.ResponseWriter, r *http.Request)
+        +HandleTracking(w http.ResponseWriter, r *http.Request)
+        +HealthCheck(w http.ResponseWriter, r *http.Request)
+        +LogNats()
+        +Close() error
+    }
+
+    class server.Server {
+        +GetLogger() zerolog.Logger
+        +WithHandlerFunc(path string, handler http.HandlerFunc, methods...)
+        +Error(w http.ResponseWriter, message string, code int)
+    }
+
+    class auth.AuthMiddleware {
+        +EnsureJWT(handler http.HandlerFunc) http.HandlerFunc
+    }
+
+    class jwt.Decoder {
+        +DecodeUUID(token string) (uuid.UUID, error)
+    }
+
+    class natsreciver.Receiver {
+        +Subscribe(subject string, handler func(*nats.Msg)) (Subscription, error)
+        +Publish(subject string, data []byte) error
+        +Close() error
+    }
+
+    class zerolog.Logger {
+        +Info()
+        +Debug()
+        +Err(error)
+    }
+
+    class http.Request
+    class http.ResponseWriter
+    class websocket.Conn
+
+    class TrackingRequest {
+        +Location repoangebot.Location
+    }
+
+    Service --> server.Server
+    Service --> auth.AuthMiddleware
+    Service --> jwt.Decoder
+    Service --> natsreciver.Receiver
+
+    Service --> websocket.Conn : Uses in WSHandler
+    Service --> zerolog.Logger : Uses for logging
+    Service --> TrackingRequest : Uses in HandleTracking
+    Service --> http.ResponseWriter : Handles HTTP
+    Service --> http.Request : Handles HTTP
+
+```
+
 # Gateway Service - Dokumentation
 
 Der Gateway-Service ist ein zentraler HTTP-Proxy, der eingehende Anfragen basierend auf dem URL-Pfad an die jeweils zuständigen Microservices weiterleitet.

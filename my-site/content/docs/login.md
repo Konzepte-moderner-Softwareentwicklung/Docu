@@ -1,125 +1,137 @@
 ---
 title: 'Login'
 ---
-Dieser Service ermöglicht es Benutzern, sich über E-Mail/Passwort oder passwortlos via WebAuthn (Passkey) anzumelden. Die Authentifizierung erzeugt ein Token, das für nachfolgende geschützte Anfragen benötigt wird.
 
+# Dokumentation zum Login im `UserController`
 
-## 📥 Klassische Anmeldung: E-Mail & Passwort
+## Übersicht
 
-### 🔧 Methode
-
-```js
-await client.login(email, password);
-```
-
-### 🧾 Beschreibung
-
-Authentifiziert einen Benutzer mit E-Mail und Passwort. Beim Erfolg wird automatisch ein Authentifizierungstoken gespeichert und eine WebSocket-Verbindung geöffnet.
-
-### 📌 Parameter
-
-| Name       | Typ    | Beschreibung     |
-| ---------- | ------ | ---------------- |
-| `email`    | string | Benutzer-E-Mail  |
-| `password` | string | Benutzerpasswort |
-
-### ✅ Beispiel
-
-```js
-await client.login("benutzer@example.com", "meinPasswort123");
-```
-
-### ⚠️ Fehlerbehandlung
-
-Falls die Anmeldung fehlschlägt, wird eine aussagekräftige Fehlermeldung ausgelöst.
+Der `UserController` bietet mehrere Endpunkte zur Authentifizierung von Benutzern, sowohl über klassische E-Mail/Passwort-Logins als auch über WebAuthn (Passkey)-basierte Authentifizierung. Das Ziel ist es, den Benutzer sicher zu authentifizieren und bei Erfolg ein JWT-Token zurückzugeben, das für 24 Stunden gültig ist.
 
 ---
 
-## 🔐 Passwortlos anmelden mit Passkey (WebAuthn)
+## Endpunkte und Funktionen
 
-### 🔧 Methode
+### 1. Klassischer Login: `/users/login` (POST)
 
-```js
-await client.loginPasskey(email);
-```
+**Funktion:** `GetLoginToken`
 
-### 🧾 Beschreibung
+* **Beschreibung:**
+  Authentifiziert einen Benutzer anhand von E-Mail und Passwort.
+  Bei erfolgreicher Authentifizierung wird ein JWT-Token generiert, das 24 Stunden gültig ist.
 
-Führt eine passwortlose Anmeldung per Passkey (z. B. FaceID, TouchID, FIDO2-Sicherheitsschlüssel) durch. Diese Methode nutzt den WebAuthn-Standard zur sicheren Authentifizierung.
+* **Request Body (JSON):**
 
-### 📌 Parameter
+  ```json
+  {
+    "email": "string",
+    "password": "string"
+  }
+  ```
 
-| Name    | Typ    | Beschreibung                     |
-| ------- | ------ | -------------------------------- |
-| `email` | string | Die registrierte Benutzer-E-Mail |
+* **Ablauf:**
 
-### ✅ Beispiel
+    1. E-Mail und Passwort werden aus dem JSON-Request ausgelesen.
+    2. Benutzer wird anhand der E-Mail gesucht.
+    3. Passwort wird mit dem gespeicherten Hash verglichen (über `hasher.VerifyPassword`).
+    4. Bei Erfolg wird ein JWT-Token erzeugt (`EncodeUUID`) und als JSON zurückgegeben.
+    5. Bei Fehlern wird ein entsprechender HTTP-Statuscode mit Fehlermeldung zurückgegeben.
 
-```js
-await client.loginPasskey("benutzer@example.com");
-```
+* **Antwort (bei Erfolg):**
 
-### 🔄 Ablauf
+  ```json
+  {
+    "token": "JWT-Token"
+  }
+  ```
 
-1. Holt Anmeldeoptionen vom Server (`/api/user/webauthn/login/options`).
-2. Führt WebAuthn-Authentifizierung durch.
-3. Sendet Authentifizierungsdaten an den Server zur Verifikation (`/api/user/webauthn/login`).
-4. Speichert Token und verbindet WebSocket.
+* **Fehler:**
 
-### ⚠️ Fehlerbehandlung
-
-* Ungültige E-Mail: Es wird eine Exception geworfen.
-* Abbruch oder Verweigerung der WebAuthn-Anfrage durch den Benutzer führt zu einem Fehler.
-
----
-
-## 🌐 WebSocket-Verbindung
-
-Nach erfolgreichem Login (egal ob klassisch oder per Passkey) wird eine WebSocket-Verbindung automatisch aufgebaut:
-
-```js
-client.connectWebSocket();
-```
-
-Dies ermöglicht z. B. serverseitige Push-Nachrichten in Echtzeit.
+    * 400: Fehler beim Lesen der Anfrage
+    * 401: Falsches Passwort
+    * 500: Nutzer nicht gefunden oder Fehler bei Token-Generierung
 
 ---
 
-## 🧪 Token-Nutzung
+### 2. WebAuthn Login
 
-Das erhaltene Token wird in `client.token` gespeichert und automatisch in geschützten API-Requests (z. B. Angebotserstellung) verwendet.
+WebAuthn-Login erfolgt in zwei Schritten: Optionen abrufen und Login abschließen.
+
+#### a) Begin WebAuthn Login: `/users/webauthn/login/options` (GET)
+
+**Funktion:** `beginLogin`
+
+* **Beschreibung:**
+  Startet den WebAuthn-Login-Prozess, indem Login-Optionen generiert werden.
+
+* **Query Parameter:**
+
+    * `email`: E-Mail-Adresse des Benutzers
+
+* **Ablauf:**
+
+    1. Validiert die E-Mail-Adresse.
+    2. Benutzer wird anhand der E-Mail gesucht.
+    3. Login-Optionen und Session-Daten werden erzeugt (`service.webauth.BeginLogin`).
+    4. Session-Daten werden im Benutzerobjekt gespeichert.
+    5. Login-Optionen werden als JSON zurückgegeben.
+
+* **Antwort (bei Erfolg):** JSON mit WebAuthn-CredentialAssertion.
+
+* **Fehler:**
+
+    * 400: Ungültige E-Mail-Adresse
+    * 404: Benutzer nicht gefunden
+    * 500: Interner Serverfehler
 
 ---
 
-## 📤 Logout
+#### b) Finish WebAuthn Login: `/users/webauthn/login` (POST)
 
-### 🔧 Methode
+**Funktion:** `finishLogin`
 
-```js
-await client.logout();
-```
+* **Beschreibung:**
+  Verifiziert die WebAuthn-Anmeldung und gibt bei Erfolg ein JWT-Token zurück.
 
-### Beschreibung
+* **Query Parameter:**
 
-* Setzt das Token zurück.
-* Trennt die WebSocket-Verbindung.
+    * `email`: E-Mail-Adresse des Benutzers
+
+* **Ablauf:**
+
+    1. Validiert die E-Mail-Adresse.
+    2. Benutzer wird anhand der E-Mail gesucht.
+    3. WebAuthn-Login wird mit Session-Daten überprüft (`service.webauth.FinishLogin`).
+    4. Bei Erfolg wird ein JWT-Token für 24 Stunden generiert und zurückgegeben.
+
+* **Antwort (bei Erfolg):**
+
+  ```json
+  {
+    "token": "JWT-Token"
+  }
+  ```
+
+* **Fehler:**
+
+    * 400: Ungültige E-Mail-Adresse
+    * 401: Authentifizierung fehlgeschlagen
+    * 404: Benutzer nicht gefunden
+    * 500: Interner Serverfehler
 
 ---
 
-## 🔒 Sicherheitshinweise
+## Wichtige Details
 
-* Alle Passkey-bezogenen Anfragen verwenden `credentials: "include"` und CORS-Modus.
-* Die Anmeldedaten werden **nicht im Klartext** übertragen.
-* Die WebAuthn-Authentifizierung erfolgt vollständig im Browser.
+* **JWT-Token**:
+  Ein JWT wird mit der Benutzer-ID als Payload erzeugt, gültig für 24 Stunden.
 
----
+* **Session-Daten bei WebAuthn:**
 
-## 📚 Weitere Methoden
+    * `BeginLogin` und `FinishLogin` verwenden sessionData, die temporär im User-Objekt gespeichert werden.
+    * Diese Session-Daten sind notwendig zur Validierung des WebAuthn-Ablaufs.
 
-Für Registrierung mit Passkey siehe:
+* **Fehlerbehandlung:**
+  Alle Fehler führen zu einer aussagekräftigen HTTP-Antwort mit Statuscode und Fehlermeldung.
 
-```js
-await client.registerPasskey();
-```
 
-Für Benutzer-Management siehe Methoden wie `getUsers()`, `createUser()`, etc.

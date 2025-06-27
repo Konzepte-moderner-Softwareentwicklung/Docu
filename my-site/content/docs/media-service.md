@@ -1,141 +1,156 @@
 ---
 title: 'Media Service'
 ---
+```mermaid
+classDiagram
+    class MediaController {
+        -mediaservice *MediaService
+        -Server *Server
+        +New(svc *MediaService) MediaController
+        +setupRoutes()
+        +handleIndex(w http.ResponseWriter, r *http.Request)
+        +UploadPicture(w http.ResponseWriter, r *http.Request)
+        +DownloadPicture(w http.ResponseWriter, r *http.Request)
+        +GetCompoundLinks(w http.ResponseWriter, r *http.Request)
+        +UploadToCompoundLinks(w http.ResponseWriter, r *http.Request)
+    }
 
-# Media Service - Dokumentation
+    class MediaService {
+        +UploadPicture(ctx context.Context, user string, contentType string, img []byte) (string, error)
+        +GetPicture(ctx context.Context, name string) ([]byte, error)
+        +GetMultiPicture(ctx context.Context, user uuid.UUID) ([]string, error)
+        +UploadPictureToMulti(ctx context.Context, user string, id string, contentType string, img []byte) error
+    }
 
-Der Media Service stellt Endpunkte zum Upload und Download von Bildern bereit und verwaltet einzelne sowie mehrere (komplexe) Bild-Links.
+    class Server {
+        +NewServer() *Server
+        +WithHandlerFunc(path string, handler func(http.ResponseWriter, *http.Request), method string)
+        +Error(w http.ResponseWriter, message string, code int)
+        +GetLogger() Logger
+    }
 
----
+    class Logger {
+        +Err(err error)
+    }
 
-## Basis-URL
+    MediaController --> MediaService : uses
+    MediaController --> Server : embeds
+    Server --> Logger : uses
+```
 
-`/media`
+# MediaService Controller
+
+Der MediaService Controller stellt HTTP-Endpunkte bereit, um Bilder und Medieninhalte zu verwalten. Dies umfasst den Upload, Download und das Verwalten mehrerer Bild-Links für Benutzer oder Angebote.
+
+## Übersicht
+
+Der Controller ist Teil des MediaService und bindet sich an die Business-Logik (`service.MediaService`) sowie den HTTP-Server (`server.Server`). Er bietet folgende Funktionalitäten:
+
+* **Upload einzelner Bilder** (z.B. Profilbilder, Banner)
+* **Download einzelner Bilder**
+* **Verwalten von "Compound Links"**, d.h. mehreren Bildern, die einem Nutzer oder Objekt zugeordnet sind (z.B. mehrere Bilder zu einem Angebot)
+* **Healthcheck**
 
 ---
 
 ## Endpunkte
 
-### 1. `GET /media/image`
+### GET `/media/image`
 
-* **Beschreibung:** Test- oder Index-Endpunkt, gibt "Hello World" zurück.
-* **Request Body:** Kein
-* **Response:** Plain Text `"Hello World"`
-* **Status Codes:** 200 OK
+* **Beschreibung:** Health-Check Endpoint, gibt „Hello World“ zurück
+* **Antwort:** 200 OK, Text „Hello World“
 
 ---
 
-### 2. `POST /media/image`
+### POST `/media/image`
 
-* **Beschreibung:** Upload eines einzelnen Bildes.
-* **Request Header:**
+* **Beschreibung:** Upload eines einzelnen Bildes für den authentifizierten Benutzer
+* **Headers:**
 
-    * `Content-Type`: Muss den Medientyp des Bildes angeben (z.B. `image/jpeg`).
-    * `UserId`: ID des hochladenden Benutzers (wird als Header erwartet).
-* **Request Body:** Binärdaten des Bildes.
-* **Response Body (JSON):**
+  * `Authorization` (JWT Token, Pflicht)
+  * `Content-Type` (z.B. `image/jpeg`, Pflicht)
+  * `UserId` (User-ID im Header)
+* **Body:** Bilddaten (rohe Bytes)
+* **Antwort:**
 
-  ```json
-  {
-    "name": "string",
-    "success": true
-  }
-  ```
-* **Status Codes:**
-
-    * 200 OK bei Erfolg
-    * 400 Bad Request, wenn Content-Type oder UserId fehlt
-    * 500 Internal Server Error bei Upload-Fehlern
+  * 200 OK mit JSON `{ "name": "<Bildname>", "success": true }`
+  * Fehlercodes: 400 (Bad Request), 500 (Serverfehler)
 
 ---
 
-### 3. `GET /media/image/{id}`
+### GET `/media/image/{id}`
 
-* **Beschreibung:** Download eines Bildes nach Bild-ID (Name).
-* **URL-Parameter:**
+* **Beschreibung:** Download eines Bildes anhand des Namens/IDs
+* **Parameter:**
 
-    * `id` (string): Bildname/ID.
-* **Response:**
+  * `id` (Pfadparameter, Bildname)
+* **Antwort:**
 
-    * Bilddaten mit Header `Content-Type: image/jpeg`
-* **Status Codes:**
-
-    * 200 OK bei Erfolg
-    * 400 Bad Request, wenn `id` fehlt
-    * 500 Internal Server Error bei Fehlern
+  * 200 OK mit Bilddaten (`image/jpeg`)
+  * Fehlercodes: 400, 500
 
 ---
 
-### 4. `GET /media/multi/{id}`
+### GET `/media/multi/{id}`
 
-* **Beschreibung:** Gibt eine Liste von Bild-URLs (compound links) zurück, die zu einer zusammengesetzten Entität gehören.
-* **URL-Parameter:**
+* **Beschreibung:** Gibt eine Liste von URLs zurück, die zu mehreren Bildern (Compound Links) eines Nutzers gehören
+* **Parameter:**
 
-    * `id` (UUID): ID der zusammengesetzten Entität.
-* **Response Body (JSON):** Array von URLs, z.B.
+  * `id` (Pfadparameter, User UUID)
+* **Antwort:**
 
-  ```json
-  [
-    "/media/image/abc123",
-    "/media/image/def456"
-  ]
-  ```
-* **Status Codes:**
-
-    * 200 OK bei Erfolg
-    * 400 Bad Request, wenn `id` fehlt oder ungültig ist
-    * 500 Internal Server Error bei Fehlern
+  * 200 OK mit JSON-Array von Bild-URLs
+  * Fehlercodes: 400, 500
 
 ---
 
-### 5. `POST /media/multi/{id}`
+### POST `/media/multi/{id}`
 
-* **Beschreibung:** Upload eines Bildes zu einer zusammengesetzten Entität.
-* **URL-Parameter:**
+* **Beschreibung:** Upload eines Bildes, das mit Compound Links für einen bestimmten User/Offer verknüpft wird
+* **Headers:**
 
-    * `id` (string): ID der zusammengesetzten Entität.
-* **Request Header:**
+  * `Authorization` (JWT Token)
+  * `Content-Type` (z.B. `image/jpeg`)
+  * `UserId` (User-ID im Header)
+* **Parameter:**
 
-    * `Content-Type`: Medientyp des Bildes
-    * `UserId`: ID des Benutzers (muss gesetzt sein)
-* **Request Body:** Binärdaten des Bildes
-* **Response:** Kein Body, nur Status-Code
-* **Status Codes:**
-
-    * 200 OK bei Erfolg
-    * 400 Bad Request bei fehlenden Headern oder Parametern
-    * 500 Internal Server Error bei Upload-Fehlern
+  * `id` (Pfadparameter, Compound Link ID)
+* **Body:** Bilddaten (rohe Bytes)
+* **Antwort:** 200 OK bei Erfolg
+* **Fehlercodes:** 400, 500
 
 ---
 
-## Header
+## Implementierungsdetails
 
-| Header   | Bedeutung                    | Erforderlich?  |
-| -------- | ---------------------------- | -------------- |
-| `UserId` | ID des Nutzers, der hochlädt | Ja bei Uploads |
-
----
-
-## Fehlerhandling
-
-* 400 Bad Request bei ungültigen oder fehlenden Parametern oder Headern.
-* 500 Internal Server Error bei internen Fehlern.
+* Nutzt `github.com/gorilla/mux` für Routing.
+* Setzt voraus, dass der User über den `UserIdHeader` im HTTP Header identifiziert wird.
+* Nutzt den MediaService (`service.MediaService`) für alle Business-Logik Operationen (Upload, Download, Verwaltung von Compound Links).
+* Fehler werden als JSON mit `{ "message": "Fehlermeldung" }` zurückgegeben.
+* Unterstützt Multipart-Bild-Uploads nicht (rohe Bytes im Request Body).
 
 ---
 
-## Beispiel Curl Upload (einzelnes Bild)
+## Beispiel-Request Upload Bild
 
 ```bash
-curl -X POST https://localhost/api/media/image \
-  -H "Content-Type: image/jpeg" \
-  -H "UserId: 1234" \
-  --data-binary "@pfad/zum/bild.jpg"
+curl -X POST "http://localhost:8080/media/image" \
+     -H "Authorization: Bearer <jwt-token>" \
+     -H "UserId: <user-uuid>" \
+     -H "Content-Type: image/jpeg" \
+     --data-binary "@meinbild.jpg"
 ```
 
 ---
 
-## Beispiel Curl Download (Bild)
+## Fehlerbehandlung
 
-```bash
-curl https://localhost/media/image/abc123 > downloaded.jpg
-```
+Der Controller gibt bei Fehlern aussagekräftige HTTP-Statuscodes zurück:
+
+| Statuscode | Bedeutung                                                            |
+| ---------- | -------------------------------------------------------------------- |
+| 400        | Ungültige Anfrage (z.B. fehlende Parameter, fehlerhafte UUID)        |
+| 500        | Interner Serverfehler (z.B. Probleme beim Zugriff auf Medienservice) |
+
+---
+

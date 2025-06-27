@@ -10,87 +10,64 @@
 <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32" />
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
 <link fetchpriority="low" href="/site.webmanifest" rel="manifest" />
-<title>Angebot Service – My Cargonaut</title>
-  <meta name="description" content=" classDiagram%% Controllerclass OfferController {- Server *server.Server- Client *msclient.Client- service service.Service- AuthMiddleware *auth.AuthMiddleware- Conn *nats.Conn&#43; PayOffer()&#43; OccupyOffer()&#43; handleCreateOffer()&#43; handleGetOffer()&#43; handleGetOfferByFilter()&#43; handlePostRating()}%% Servicesclass service.Service {&#43; CreateOffer(offer, imageURL)&#43; GetOffer(uuid)&#43; GetOffersByFilter(filter)&#43; OccupieOffer(id, userId, space)&#43; PayOffer(id, userId)}class repoangebot.Offer {- uuid ID- string Title- string Description- Location Location- float64 Price- float64 Size- Time AvailableFrom- uuid Creator}class repoangebot.Space {- float Width- float Height- float Depth}class repoangebot.Filter {- float MinPrice- float MaxPrice- float Latitude- float Longitude- float Radius}class ratingservice.Rating {- int Score- string Comment}%% Abhängigkeiten &amp; BeziehungenOfferController --&gt; service.ServiceOfferController --&gt; repoangebot.OfferOfferController --&gt; repoangebot.SpaceOfferController --&gt; repoangebot.FilterOfferController --&gt; ratingservice.RatingOfferController --&gt; msclient.ClientOfferController --&gt; auth.AuthMiddlewareOfferController --&gt; nats.Conn 📦 AngebotserviceDer angebotservice stellt REST-HTTP-Endpunkte zur Verwaltung von Angeboten bereit. Dazu gehören das Erstellen, Abrufen, Buchen, Bezahlen und Bewerten von Angeboten. Die Authentifizierung erfolgt per JWT, und die Bewertung wird asynchron über NATS verarbeitet." /><link rel="canonical" href="//localhost:1313/docs/offer-service/" itemprop="url" />
+<title>Chat Service – My Cargonaut</title>
+  <meta name="description" content=" classDiagramdirection TBclass ChatController {- service: Service- AuthMiddleware: AuthMiddleware&#43;HandleGetChats(w http.ResponseWriter, r *http.Request)&#43;CreateChat(w http.ResponseWriter, r *http.Request)&#43;HandleGetChat(w http.ResponseWriter, r *http.Request)&#43;HandleSendMessage(w http.ResponseWriter, r *http.Request)&#43;setupRoutes()}class Service {&#43;GetChats(userId uuid.UUID) []Chat&#43;CreateChat(userIds ...uuid.UUID) uuid.UUID&#43;GetChat(chatId, userId uuid.UUID) []Message&#43;SendMessage(userId, chatId uuid.UUID, content string) error}class AuthMiddleware {&#43;EnsureJWT(handler http.HandlerFunc) http.HandlerFunc}class Server {&#43;WithHandlerFunc(path string, handler http.HandlerFunc, method string)&#43;Error(w http.ResponseWriter, message string, statusCode int)&#43;GetLogger() Logger}ChatController --&gt; ServiceChatController --&gt; AuthMiddlewareChatController --&gt; ServerService --&gt; Repoclass Repo {&lt;&lt;interface&gt;&gt;} 📦 ChatController – Dokumentation🧭 Übersicht Der ChatController ist ein HTTP-Controller für den Chat-Service der Anwendung. Er stellt verschiedene REST-Endpoints zur Verfügung, um Chats zu erstellen, abzurufen und Nachrichten zu versenden. Der Controller verwendet JWT-Authentifizierung und basiert auf Gorilla Mux für das Routing." /><link rel="canonical" href="//localhost:1313/docs/chat-service/" itemprop="url" />
 
-<meta property="og:title" content="Angebot Service" />
+<meta property="og:title" content="Chat Service" />
 <meta property="og:description" content="
   classDiagram
-    %% Controller
-    class OfferController {
-        - Server *server.Server
-        - Client *msclient.Client
-        - service service.Service
-        - AuthMiddleware *auth.AuthMiddleware
-        - Conn *nats.Conn
-        &#43; PayOffer()
-        &#43; OccupyOffer()
-        &#43; handleCreateOffer()
-        &#43; handleGetOffer()
-        &#43; handleGetOfferByFilter()
-        &#43; handlePostRating()
+    direction TB
+
+    class ChatController {
+        - service: Service
+        - AuthMiddleware: AuthMiddleware
+        &#43;HandleGetChats(w http.ResponseWriter, r *http.Request)
+        &#43;CreateChat(w http.ResponseWriter, r *http.Request)
+        &#43;HandleGetChat(w http.ResponseWriter, r *http.Request)
+        &#43;HandleSendMessage(w http.ResponseWriter, r *http.Request)
+        &#43;setupRoutes()
     }
 
-    %% Services
-    class service.Service {
-        &#43; CreateOffer(offer, imageURL)
-        &#43; GetOffer(uuid)
-        &#43; GetOffersByFilter(filter)
-        &#43; OccupieOffer(id, userId, space)
-        &#43; PayOffer(id, userId)
+    class Service {
+        &#43;GetChats(userId uuid.UUID) []Chat
+        &#43;CreateChat(userIds ...uuid.UUID) uuid.UUID
+        &#43;GetChat(chatId, userId uuid.UUID) []Message
+        &#43;SendMessage(userId, chatId uuid.UUID, content string) error
     }
 
-    class repoangebot.Offer {
-        - uuid ID
-        - string Title
-        - string Description
-        - Location Location
-        - float64 Price
-        - float64 Size
-        - Time AvailableFrom
-        - uuid Creator
+    class AuthMiddleware {
+        &#43;EnsureJWT(handler http.HandlerFunc) http.HandlerFunc
     }
 
-    class repoangebot.Space {
-        - float Width
-        - float Height
-        - float Depth
+    class Server {
+        &#43;WithHandlerFunc(path string, handler http.HandlerFunc, method string)
+        &#43;Error(w http.ResponseWriter, message string, statusCode int)
+        &#43;GetLogger() Logger
     }
 
-    class repoangebot.Filter {
-        - float MinPrice
-        - float MaxPrice
-        - float Latitude
-        - float Longitude
-        - float Radius
-    }
 
-    class ratingservice.Rating {
-        - int Score
-        - string Comment
-    }
+    ChatController --&gt; Service
+    ChatController --&gt; AuthMiddleware
+    ChatController --&gt; Server
 
-    %% Abhängigkeiten &amp; Beziehungen
-    OfferController --&gt; service.Service
-    OfferController --&gt; repoangebot.Offer
-    OfferController --&gt; repoangebot.Space
-    OfferController --&gt; repoangebot.Filter
-    OfferController --&gt; ratingservice.Rating
-    OfferController --&gt; msclient.Client
-    OfferController --&gt; auth.AuthMiddleware
-    OfferController --&gt; nats.Conn
-📦 AngebotserviceDer angebotservice stellt REST-HTTP-Endpunkte zur Verwaltung von Angeboten bereit. Dazu gehören das Erstellen, Abrufen, Buchen, Bezahlen und Bewerten von Angeboten. Die Authentifizierung erfolgt per JWT, und die Bewertung wird asynchron über NATS verarbeitet." />
+    Service --&gt; Repo
+
+    class Repo {
+        &lt;&lt;interface&gt;&gt;
+    }
+📦 ChatController – Dokumentation🧭 Übersicht
+    Der ChatController ist ein HTTP-Controller für den Chat-Service der Anwendung. Er stellt verschiedene REST-Endpoints zur Verfügung, um Chats zu erstellen, abzurufen und Nachrichten zu versenden. Der Controller verwendet JWT-Authentifizierung und basiert auf Gorilla Mux für das Routing." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="//localhost:1313/docs/offer-service/" /><meta property="article:section" content="docs" />
+<meta property="og:url" content="//localhost:1313/docs/chat-service/" /><meta property="article:section" content="docs" />
 
 
 
-  <meta itemprop="name" content="Angebot Service">
-  <meta itemprop="description" content="classDiagram%% Controllerclass OfferController {- Server *server.Server- Client *msclient.Client- service service.Service- AuthMiddleware *auth.AuthMiddleware- Conn *nats.Conn&#43; PayOffer()&#43; OccupyOffer()&#43; handleCreateOffer()&#43; handleGetOffer()&#43; handleGetOfferByFilter()&#43; handlePostRating()}%% Servicesclass service.Service {&#43; CreateOffer(offer, imageURL)&#43; GetOffer(uuid)&#43; GetOffersByFilter(filter)&#43; OccupieOffer(id, userId, space)&#43; PayOffer(id, userId)}class repoangebot.Offer {- uuid ID- string Title- string Description- Location Location- float64 Price- float64 Size- Time AvailableFrom- uuid Creator}class repoangebot.Space {- float Width- float Height- float Depth}class repoangebot.Filter {- float MinPrice- float MaxPrice- float Latitude- float Longitude- float Radius}class ratingservice.Rating {- int Score- string Comment}%% Abhängigkeiten &amp; BeziehungenOfferController --&gt; service.ServiceOfferController --&gt; repoangebot.OfferOfferController --&gt; repoangebot.SpaceOfferController --&gt; repoangebot.FilterOfferController --&gt; ratingservice.RatingOfferController --&gt; msclient.ClientOfferController --&gt; auth.AuthMiddlewareOfferController --&gt; nats.Conn 📦 AngebotserviceDer angebotservice stellt REST-HTTP-Endpunkte zur Verwaltung von Angeboten bereit. Dazu gehören das Erstellen, Abrufen, Buchen, Bezahlen und Bewerten von Angeboten. Die Authentifizierung erfolgt per JWT, und die Bewertung wird asynchron über NATS verarbeitet.">
-  <meta itemprop="wordCount" content="422">
+  <meta itemprop="name" content="Chat Service">
+  <meta itemprop="description" content="classDiagramdirection TBclass ChatController {- service: Service- AuthMiddleware: AuthMiddleware&#43;HandleGetChats(w http.ResponseWriter, r *http.Request)&#43;CreateChat(w http.ResponseWriter, r *http.Request)&#43;HandleGetChat(w http.ResponseWriter, r *http.Request)&#43;HandleSendMessage(w http.ResponseWriter, r *http.Request)&#43;setupRoutes()}class Service {&#43;GetChats(userId uuid.UUID) []Chat&#43;CreateChat(userIds ...uuid.UUID) uuid.UUID&#43;GetChat(chatId, userId uuid.UUID) []Message&#43;SendMessage(userId, chatId uuid.UUID, content string) error}class AuthMiddleware {&#43;EnsureJWT(handler http.HandlerFunc) http.HandlerFunc}class Server {&#43;WithHandlerFunc(path string, handler http.HandlerFunc, method string)&#43;Error(w http.ResponseWriter, message string, statusCode int)&#43;GetLogger() Logger}ChatController --&gt; ServiceChatController --&gt; AuthMiddlewareChatController --&gt; ServerService --&gt; Repoclass Repo {&lt;&lt;interface&gt;&gt;} 📦 ChatController – Dokumentation🧭 Übersicht Der ChatController ist ein HTTP-Controller für den Chat-Service der Anwendung. Er stellt verschiedene REST-Endpoints zur Verfügung, um Chats zu erstellen, abzurufen und Nachrichten zu versenden. Der Controller verwendet JWT-Authentifizierung und basiert auf Gorilla Mux für das Routing.">
+  <meta itemprop="wordCount" content="416">
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Angebot Service">
-  <meta name="twitter:description" content="classDiagram%% Controllerclass OfferController {- Server *server.Server- Client *msclient.Client- service service.Service- AuthMiddleware *auth.AuthMiddleware- Conn *nats.Conn&#43; PayOffer()&#43; OccupyOffer()&#43; handleCreateOffer()&#43; handleGetOffer()&#43; handleGetOfferByFilter()&#43; handlePostRating()}%% Servicesclass service.Service {&#43; CreateOffer(offer, imageURL)&#43; GetOffer(uuid)&#43; GetOffersByFilter(filter)&#43; OccupieOffer(id, userId, space)&#43; PayOffer(id, userId)}class repoangebot.Offer {- uuid ID- string Title- string Description- Location Location- float64 Price- float64 Size- Time AvailableFrom- uuid Creator}class repoangebot.Space {- float Width- float Height- float Depth}class repoangebot.Filter {- float MinPrice- float MaxPrice- float Latitude- float Longitude- float Radius}class ratingservice.Rating {- int Score- string Comment}%% Abhängigkeiten &amp; BeziehungenOfferController --&gt; service.ServiceOfferController --&gt; repoangebot.OfferOfferController --&gt; repoangebot.SpaceOfferController --&gt; repoangebot.FilterOfferController --&gt; ratingservice.RatingOfferController --&gt; msclient.ClientOfferController --&gt; auth.AuthMiddlewareOfferController --&gt; nats.Conn 📦 AngebotserviceDer angebotservice stellt REST-HTTP-Endpunkte zur Verwaltung von Angeboten bereit. Dazu gehören das Erstellen, Abrufen, Buchen, Bezahlen und Bewerten von Angeboten. Die Authentifizierung erfolgt per JWT, und die Bewertung wird asynchron über NATS verarbeitet.">
+  <meta name="twitter:title" content="Chat Service">
+  <meta name="twitter:description" content="classDiagramdirection TBclass ChatController {- service: Service- AuthMiddleware: AuthMiddleware&#43;HandleGetChats(w http.ResponseWriter, r *http.Request)&#43;CreateChat(w http.ResponseWriter, r *http.Request)&#43;HandleGetChat(w http.ResponseWriter, r *http.Request)&#43;HandleSendMessage(w http.ResponseWriter, r *http.Request)&#43;setupRoutes()}class Service {&#43;GetChats(userId uuid.UUID) []Chat&#43;CreateChat(userIds ...uuid.UUID) uuid.UUID&#43;GetChat(chatId, userId uuid.UUID) []Message&#43;SendMessage(userId, chatId uuid.UUID, content string) error}class AuthMiddleware {&#43;EnsureJWT(handler http.HandlerFunc) http.HandlerFunc}class Server {&#43;WithHandlerFunc(path string, handler http.HandlerFunc, method string)&#43;Error(w http.ResponseWriter, message string, statusCode int)&#43;GetLogger() Logger}ChatController --&gt; ServiceChatController --&gt; AuthMiddlewareChatController --&gt; ServerService --&gt; Repoclass Repo {&lt;&lt;interface&gt;&gt;} 📦 ChatController – Dokumentation🧭 Übersicht Der ChatController ist ein HTTP-Controller für den Chat-Service der Anwendung. Er stellt verschiedene REST-Endpoints zur Verfügung, um Chats zu erstellen, abzurufen und Nachrichten zu versenden. Der Controller verwendet JWT-Authentifizierung und basiert auf Gorilla Mux für das Routing.">
 
     <link href="/css/compiled/main.css" rel="stylesheet" />
 
@@ -208,31 +185,33 @@
   >Docs
         <span class="hextra-sidebar-collapsible-button"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" class="hx-h-[18px] hx-min-w-[18px] hx-rounded-sm hx-p-0.5 hover:hx-bg-gray-800/5 dark:hover:hx-bg-gray-100/5"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" class="hx-origin-center hx-transition-transform rtl:-hx-rotate-180"></path></svg></span>
     </a><div class="ltr:hx-pr-0 hx-overflow-hidden">
-        <ul class='hx-relative hx-flex hx-flex-col hx-gap-1 before:hx-absolute before:hx-inset-y-1 before:hx-w-px before:hx-bg-gray-200 before:hx-content-[""] ltr:hx-ml-3 ltr:hx-pl-3 ltr:before:hx-left-0 rtl:hx-mr-3 rtl:hx-pr-3 rtl:before:hx-right-0 dark:before:hx-bg-neutral-800'><li class="hx-flex hx-flex-col open"><a
+        <ul class='hx-relative hx-flex hx-flex-col hx-gap-1 before:hx-absolute before:hx-inset-y-1 before:hx-w-px before:hx-bg-gray-200 before:hx-content-[""] ltr:hx-ml-3 ltr:hx-pl-3 ltr:before:hx-left-0 rtl:hx-mr-3 rtl:hx-pr-3 rtl:before:hx-right-0 dark:before:hx-bg-neutral-800'><li class="hx-flex hx-flex-col "><a
     class="hx-flex hx-items-center hx-justify-between hx-gap-2 hx-cursor-pointer hx-rounded hx-px-2 hx-py-1.5 hx-text-sm hx-transition-colors [-webkit-tap-highlight-color:transparent] [-webkit-touch-callout:none] [word-break:break-word]
-      sidebar-active-item hx-bg-primary-100 hx-font-semibold hx-text-primary-800 contrast-more:hx-border contrast-more:hx-border-primary-500 dark:hx-bg-primary-400/10 dark:hx-text-primary-600 contrast-more:dark:hx-border-primary-500"
+      hx-text-gray-500 hover:hx-bg-gray-100 hover:hx-text-gray-900 contrast-more:hx-border contrast-more:hx-border-transparent contrast-more:hx-text-gray-900 contrast-more:hover:hx-border-gray-900 dark:hx-text-neutral-400 dark:hover:hx-bg-primary-100/5 dark:hover:hx-text-gray-50 contrast-more:dark:hx-text-gray-50 contrast-more:dark:hover:hx-border-gray-50"
     href="/docs/offer-service/"
     
   >Angebot Service
     </a>
+              
+            </li><li class="hx-flex hx-flex-col open"><a
+    class="hx-flex hx-items-center hx-justify-between hx-gap-2 hx-cursor-pointer hx-rounded hx-px-2 hx-py-1.5 hx-text-sm hx-transition-colors [-webkit-tap-highlight-color:transparent] [-webkit-touch-callout:none] [word-break:break-word]
+      sidebar-active-item hx-bg-primary-100 hx-font-semibold hx-text-primary-800 contrast-more:hx-border contrast-more:hx-border-primary-500 dark:hx-bg-primary-400/10 dark:hx-text-primary-600 contrast-more:dark:hx-border-primary-500"
+    href="/docs/chat-service/"
+    
+  >Chat Service
+    </a>
   
     <ul class='hx-flex hx-flex-col hx-gap-1 hx-relative before:hx-absolute before:hx-inset-y-1 before:hx-w-px before:hx-bg-gray-200 before:hx-content-[""] dark:before:hx-bg-neutral-800 ltr:hx-pl-3 ltr:before:hx-left-0 rtl:hx-pr-3 rtl:before:hx-right-0 ltr:hx-ml-3 rtl:hx-mr-3'><li>
               <a
-                href="#-features"
+                href="#-%c3%bcbersicht"
                 class="hx-flex hx-rounded hx-px-2 hx-py-1.5 hx-text-sm hx-transition-colors [word-break:break-word] hx-cursor-pointer [-webkit-tap-highlight-color:transparent] [-webkit-touch-callout:none] contrast-more:hx-border hx-gap-2 before:hx-opacity-25 before:hx-content-['#'] hx-text-gray-500 hover:hx-bg-gray-100 hover:hx-text-gray-900 dark:hx-text-neutral-400 dark:hover:hx-bg-primary-100/5 dark:hover:hx-text-gray-50 contrast-more:hx-text-gray-900 contrast-more:dark:hx-text-gray-50 contrast-more:hx-border-transparent contrast-more:hover:hx-border-gray-900 contrast-more:dark:hover:hx-border-gray-50"
-              >🧰 Features</a>
+              >🧭 Übersicht</a>
             </li>
           <li>
               <a
-                href="#-quickstart"
+                href="#-abh%c3%a4ngigkeiten"
                 class="hx-flex hx-rounded hx-px-2 hx-py-1.5 hx-text-sm hx-transition-colors [word-break:break-word] hx-cursor-pointer [-webkit-tap-highlight-color:transparent] [-webkit-touch-callout:none] contrast-more:hx-border hx-gap-2 before:hx-opacity-25 before:hx-content-['#'] hx-text-gray-500 hover:hx-bg-gray-100 hover:hx-text-gray-900 dark:hx-text-neutral-400 dark:hover:hx-bg-primary-100/5 dark:hover:hx-text-gray-50 contrast-more:hx-text-gray-900 contrast-more:dark:hx-text-gray-50 contrast-more:hx-border-transparent contrast-more:hover:hx-border-gray-900 contrast-more:dark:hover:hx-border-gray-50"
-              >🚀 Quickstart</a>
-            </li>
-          <li>
-              <a
-                href="#-http-endpunkte"
-                class="hx-flex hx-rounded hx-px-2 hx-py-1.5 hx-text-sm hx-transition-colors [word-break:break-word] hx-cursor-pointer [-webkit-tap-highlight-color:transparent] [-webkit-touch-callout:none] contrast-more:hx-border hx-gap-2 before:hx-opacity-25 before:hx-content-['#'] hx-text-gray-500 hover:hx-bg-gray-100 hover:hx-text-gray-900 dark:hx-text-neutral-400 dark:hover:hx-bg-primary-100/5 dark:hover:hx-text-gray-50 contrast-more:hx-text-gray-900 contrast-more:dark:hx-text-gray-50 contrast-more:hx-border-transparent contrast-more:hover:hx-border-gray-900 contrast-more:dark:hover:hx-border-gray-50"
-              >🔁 HTTP-Endpunkte</a>
+              >🧩 Abhängigkeiten</a>
             </li>
           <li>
               <a
@@ -242,38 +221,30 @@
             </li>
           <li>
               <a
-                href="#-beispieldatenstrukturen"
+                href="#-api-endpunkte"
                 class="hx-flex hx-rounded hx-px-2 hx-py-1.5 hx-text-sm hx-transition-colors [word-break:break-word] hx-cursor-pointer [-webkit-tap-highlight-color:transparent] [-webkit-touch-callout:none] contrast-more:hx-border hx-gap-2 before:hx-opacity-25 before:hx-content-['#'] hx-text-gray-500 hover:hx-bg-gray-100 hover:hx-text-gray-900 dark:hx-text-neutral-400 dark:hover:hx-bg-primary-100/5 dark:hover:hx-text-gray-50 contrast-more:hx-text-gray-900 contrast-more:dark:hx-text-gray-50 contrast-more:hx-border-transparent contrast-more:hover:hx-border-gray-900 contrast-more:dark:hover:hx-border-gray-50"
-              >🧾 Beispieldatenstrukturen</a>
+              >📚 API-Endpunkte</a>
             </li>
           <li>
               <a
-                href="#-nats-messaging"
+                href="#-funktionsweise-im-detail"
                 class="hx-flex hx-rounded hx-px-2 hx-py-1.5 hx-text-sm hx-transition-colors [word-break:break-word] hx-cursor-pointer [-webkit-tap-highlight-color:transparent] [-webkit-touch-callout:none] contrast-more:hx-border hx-gap-2 before:hx-opacity-25 before:hx-content-['#'] hx-text-gray-500 hover:hx-bg-gray-100 hover:hx-text-gray-900 dark:hx-text-neutral-400 dark:hover:hx-bg-primary-100/5 dark:hover:hx-text-gray-50 contrast-more:hx-text-gray-900 contrast-more:dark:hx-text-gray-50 contrast-more:hx-border-transparent contrast-more:hover:hx-border-gray-900 contrast-more:dark:hover:hx-border-gray-50"
-              >💬 NATS Messaging</a>
+              >⚙️ Funktionsweise im Detail</a>
             </li>
           <li>
               <a
                 href="#-fehlerbehandlung"
                 class="hx-flex hx-rounded hx-px-2 hx-py-1.5 hx-text-sm hx-transition-colors [word-break:break-word] hx-cursor-pointer [-webkit-tap-highlight-color:transparent] [-webkit-touch-callout:none] contrast-more:hx-border hx-gap-2 before:hx-opacity-25 before:hx-content-['#'] hx-text-gray-500 hover:hx-bg-gray-100 hover:hx-text-gray-900 dark:hx-text-neutral-400 dark:hover:hx-bg-primary-100/5 dark:hover:hx-text-gray-50 contrast-more:hx-text-gray-900 contrast-more:dark:hx-text-gray-50 contrast-more:hx-border-transparent contrast-more:hover:hx-border-gray-900 contrast-more:dark:hover:hx-border-gray-50"
-              >🐞 Fehlerbehandlung</a>
+              >🧪 Fehlerbehandlung</a>
             </li>
           <li>
               <a
-                href="#-abh%c3%a4ngigkeiten"
+                href="#-erweiterbarkeit"
                 class="hx-flex hx-rounded hx-px-2 hx-py-1.5 hx-text-sm hx-transition-colors [word-break:break-word] hx-cursor-pointer [-webkit-tap-highlight-color:transparent] [-webkit-touch-callout:none] contrast-more:hx-border hx-gap-2 before:hx-opacity-25 before:hx-content-['#'] hx-text-gray-500 hover:hx-bg-gray-100 hover:hx-text-gray-900 dark:hx-text-neutral-400 dark:hover:hx-bg-primary-100/5 dark:hover:hx-text-gray-50 contrast-more:hx-text-gray-900 contrast-more:dark:hx-text-gray-50 contrast-more:hx-border-transparent contrast-more:hover:hx-border-gray-900 contrast-more:dark:hover:hx-border-gray-50"
-              >📚 Abhängigkeiten</a>
+              >🔄 Erweiterbarkeit</a>
             </li>
           </ul>
   
-              
-            </li><li class="hx-flex hx-flex-col "><a
-    class="hx-flex hx-items-center hx-justify-between hx-gap-2 hx-cursor-pointer hx-rounded hx-px-2 hx-py-1.5 hx-text-sm hx-transition-colors [-webkit-tap-highlight-color:transparent] [-webkit-touch-callout:none] [word-break:break-word]
-      hx-text-gray-500 hover:hx-bg-gray-100 hover:hx-text-gray-900 contrast-more:hx-border contrast-more:hx-border-transparent contrast-more:hx-text-gray-900 contrast-more:hover:hx-border-gray-900 dark:hx-text-neutral-400 dark:hover:hx-bg-primary-100/5 dark:hover:hx-text-gray-50 contrast-more:dark:hx-text-gray-50 contrast-more:dark:hover:hx-border-gray-50"
-    href="/docs/chat-service/"
-    
-  >Chat Service
-    </a>
               
             </li><li class="hx-flex hx-flex-col "><a
     class="hx-flex hx-items-center hx-justify-between hx-gap-2 hx-cursor-pointer hx-rounded hx-px-2 hx-py-1.5 hx-text-sm hx-transition-colors [-webkit-tap-highlight-color:transparent] [-webkit-touch-callout:none] [word-break:break-word]
@@ -329,16 +300,16 @@
 
     <ul class="hx-flex hx-flex-col hx-gap-1 max-md:hx-hidden">
         
-          <li class="open"><a
+          <li class=""><a
     class="hx-flex hx-items-center hx-justify-between hx-gap-2 hx-cursor-pointer hx-rounded hx-px-2 hx-py-1.5 hx-text-sm hx-transition-colors [-webkit-tap-highlight-color:transparent] [-webkit-touch-callout:none] [word-break:break-word]
-      sidebar-active-item hx-bg-primary-100 hx-font-semibold hx-text-primary-800 contrast-more:hx-border contrast-more:hx-border-primary-500 dark:hx-bg-primary-400/10 dark:hx-text-primary-600 contrast-more:dark:hx-border-primary-500"
+      hx-text-gray-500 hover:hx-bg-gray-100 hover:hx-text-gray-900 contrast-more:hx-border contrast-more:hx-border-transparent contrast-more:hx-text-gray-900 contrast-more:hover:hx-border-gray-900 dark:hx-text-neutral-400 dark:hover:hx-bg-primary-100/5 dark:hover:hx-text-gray-50 contrast-more:dark:hx-text-gray-50 contrast-more:dark:hover:hx-border-gray-50"
     href="/docs/offer-service/"
     
   >Angebot Service
     </a></li>
-          <li class=""><a
+          <li class="open"><a
     class="hx-flex hx-items-center hx-justify-between hx-gap-2 hx-cursor-pointer hx-rounded hx-px-2 hx-py-1.5 hx-text-sm hx-transition-colors [-webkit-tap-highlight-color:transparent] [-webkit-touch-callout:none] [word-break:break-word]
-      hx-text-gray-500 hover:hx-bg-gray-100 hover:hx-text-gray-900 contrast-more:hx-border contrast-more:hx-border-transparent contrast-more:hx-text-gray-900 contrast-more:hover:hx-border-gray-900 dark:hx-text-neutral-400 dark:hover:hx-bg-primary-100/5 dark:hover:hx-text-gray-50 contrast-more:dark:hx-text-gray-50 contrast-more:dark:hover:hx-border-gray-50"
+      sidebar-active-item hx-bg-primary-100 hx-font-semibold hx-text-primary-800 contrast-more:hx-border contrast-more:hx-border-primary-500 dark:hx-bg-primary-400/10 dark:hx-text-primary-600 contrast-more:dark:hx-border-primary-500"
     href="/docs/chat-service/"
     
   >Chat Service
@@ -404,23 +375,11 @@
 <nav class="hextra-toc hx-order-last hx-hidden hx-w-64 hx-shrink-0 xl:hx-block print:hx-hidden hx-px-4" aria-label="table of contents">
     <div class="hextra-scrollbar hx-sticky hx-top-16 hx-overflow-y-auto hx-pr-4 hx-pt-6 hx-text-sm [hyphens:auto] hx-max-h-[calc(100vh-var(--navbar-height)-env(safe-area-inset-bottom))] ltr:hx--mr-4 rtl:hx--ml-4"><p class="hx-mb-4 hx-font-semibold hx-tracking-tight">On this page</p><ul>
       <li class="hx-my-2 hx-scroll-my-6 hx-scroll-py-6">
-        <a class="hx-font-semibold hx-inline-block hx-text-gray-500 hover:hx-text-gray-900 dark:hx-text-gray-400 dark:hover:hx-text-gray-300 contrast-more:hx-text-gray-900 contrast-more:hx-underline contrast-more:dark:hx-text-gray-50 hx-w-full hx-break-words" href="#-features">🧰 Features
+        <a class="hx-font-semibold hx-inline-block hx-text-gray-500 hover:hx-text-gray-900 dark:hx-text-gray-400 dark:hover:hx-text-gray-300 contrast-more:hx-text-gray-900 contrast-more:hx-underline contrast-more:dark:hx-text-gray-50 hx-w-full hx-break-words" href="#-%c3%bcbersicht">🧭 Übersicht
         </a>
       </li>
       <li class="hx-my-2 hx-scroll-my-6 hx-scroll-py-6">
-        <a class="hx-font-semibold hx-inline-block hx-text-gray-500 hover:hx-text-gray-900 dark:hx-text-gray-400 dark:hover:hx-text-gray-300 contrast-more:hx-text-gray-900 contrast-more:hx-underline contrast-more:dark:hx-text-gray-50 hx-w-full hx-break-words" href="#-quickstart">🚀 Quickstart
-        </a>
-      </li>
-      <li class="hx-my-2 hx-scroll-my-6 hx-scroll-py-6">
-        <a class="ltr:hx-pl-4 rtl:hx-pr-4 hx-inline-block hx-text-gray-500 hover:hx-text-gray-900 dark:hx-text-gray-400 dark:hover:hx-text-gray-300 contrast-more:hx-text-gray-900 contrast-more:hx-underline contrast-more:dark:hx-text-gray-50 hx-w-full hx-break-words" href="#voraussetzungen">Voraussetzungen
-        </a>
-      </li>
-      <li class="hx-my-2 hx-scroll-my-6 hx-scroll-py-6">
-        <a class="ltr:hx-pl-4 rtl:hx-pr-4 hx-inline-block hx-text-gray-500 hover:hx-text-gray-900 dark:hx-text-gray-400 dark:hover:hx-text-gray-300 contrast-more:hx-text-gray-900 contrast-more:hx-underline contrast-more:dark:hx-text-gray-50 hx-w-full hx-break-words" href="#beispiel-initialisierung">Beispiel: Initialisierung
-        </a>
-      </li>
-      <li class="hx-my-2 hx-scroll-my-6 hx-scroll-py-6">
-        <a class="hx-font-semibold hx-inline-block hx-text-gray-500 hover:hx-text-gray-900 dark:hx-text-gray-400 dark:hover:hx-text-gray-300 contrast-more:hx-text-gray-900 contrast-more:hx-underline contrast-more:dark:hx-text-gray-50 hx-w-full hx-break-words" href="#-http-endpunkte">🔁 HTTP-Endpunkte
+        <a class="hx-font-semibold hx-inline-block hx-text-gray-500 hover:hx-text-gray-900 dark:hx-text-gray-400 dark:hover:hx-text-gray-300 contrast-more:hx-text-gray-900 contrast-more:hx-underline contrast-more:dark:hx-text-gray-50 hx-w-full hx-break-words" href="#-abh%c3%a4ngigkeiten">🧩 Abhängigkeiten
         </a>
       </li>
       <li class="hx-my-2 hx-scroll-my-6 hx-scroll-py-6">
@@ -428,27 +387,35 @@
         </a>
       </li>
       <li class="hx-my-2 hx-scroll-my-6 hx-scroll-py-6">
-        <a class="hx-font-semibold hx-inline-block hx-text-gray-500 hover:hx-text-gray-900 dark:hx-text-gray-400 dark:hover:hx-text-gray-300 contrast-more:hx-text-gray-900 contrast-more:hx-underline contrast-more:dark:hx-text-gray-50 hx-w-full hx-break-words" href="#-beispieldatenstrukturen">🧾 Beispieldatenstrukturen
+        <a class="hx-font-semibold hx-inline-block hx-text-gray-500 hover:hx-text-gray-900 dark:hx-text-gray-400 dark:hover:hx-text-gray-300 contrast-more:hx-text-gray-900 contrast-more:hx-underline contrast-more:dark:hx-text-gray-50 hx-w-full hx-break-words" href="#-api-endpunkte">📚 API-Endpunkte
         </a>
       </li>
       <li class="hx-my-2 hx-scroll-my-6 hx-scroll-py-6">
-        <a class="ltr:hx-pl-4 rtl:hx-pr-4 hx-inline-block hx-text-gray-500 hover:hx-text-gray-900 dark:hx-text-gray-400 dark:hover:hx-text-gray-300 contrast-more:hx-text-gray-900 contrast-more:hx-underline contrast-more:dark:hx-text-gray-50 hx-w-full hx-break-words" href="#-angebotsstruktur-repoangebotoffer">🎯 Angebotsstruktur (repoangebot.Offer)
+        <a class="ltr:hx-pl-4 rtl:hx-pr-4 hx-inline-block hx-text-gray-500 hover:hx-text-gray-900 dark:hx-text-gray-400 dark:hover:hx-text-gray-300 contrast-more:hx-text-gray-900 contrast-more:hx-underline contrast-more:dark:hx-text-gray-50 hx-w-full hx-break-words" href="#get-chat">GET /chat
         </a>
       </li>
       <li class="hx-my-2 hx-scroll-my-6 hx-scroll-py-6">
-        <a class="ltr:hx-pl-4 rtl:hx-pr-4 hx-inline-block hx-text-gray-500 hover:hx-text-gray-900 dark:hx-text-gray-400 dark:hover:hx-text-gray-300 contrast-more:hx-text-gray-900 contrast-more:hx-underline contrast-more:dark:hx-text-gray-50 hx-w-full hx-break-words" href="#-bewertung-ratingservicerating">📥 Bewertung (ratingservice.Rating)
+        <a class="ltr:hx-pl-4 rtl:hx-pr-4 hx-inline-block hx-text-gray-500 hover:hx-text-gray-900 dark:hx-text-gray-400 dark:hover:hx-text-gray-300 contrast-more:hx-text-gray-900 contrast-more:hx-underline contrast-more:dark:hx-text-gray-50 hx-w-full hx-break-words" href="#post-chat">POST /chat
         </a>
       </li>
       <li class="hx-my-2 hx-scroll-my-6 hx-scroll-py-6">
-        <a class="hx-font-semibold hx-inline-block hx-text-gray-500 hover:hx-text-gray-900 dark:hx-text-gray-400 dark:hover:hx-text-gray-300 contrast-more:hx-text-gray-900 contrast-more:hx-underline contrast-more:dark:hx-text-gray-50 hx-w-full hx-break-words" href="#-nats-messaging">💬 NATS Messaging
+        <a class="ltr:hx-pl-4 rtl:hx-pr-4 hx-inline-block hx-text-gray-500 hover:hx-text-gray-900 dark:hx-text-gray-400 dark:hover:hx-text-gray-300 contrast-more:hx-text-gray-900 contrast-more:hx-underline contrast-more:dark:hx-text-gray-50 hx-w-full hx-break-words" href="#get-chatchatid">GET /chat/{chatId}
         </a>
       </li>
       <li class="hx-my-2 hx-scroll-my-6 hx-scroll-py-6">
-        <a class="hx-font-semibold hx-inline-block hx-text-gray-500 hover:hx-text-gray-900 dark:hx-text-gray-400 dark:hover:hx-text-gray-300 contrast-more:hx-text-gray-900 contrast-more:hx-underline contrast-more:dark:hx-text-gray-50 hx-w-full hx-break-words" href="#-fehlerbehandlung">🐞 Fehlerbehandlung
+        <a class="ltr:hx-pl-4 rtl:hx-pr-4 hx-inline-block hx-text-gray-500 hover:hx-text-gray-900 dark:hx-text-gray-400 dark:hover:hx-text-gray-300 contrast-more:hx-text-gray-900 contrast-more:hx-underline contrast-more:dark:hx-text-gray-50 hx-w-full hx-break-words" href="#post-chatchatidmessages">POST /chat/{chatId}/messages
         </a>
       </li>
       <li class="hx-my-2 hx-scroll-my-6 hx-scroll-py-6">
-        <a class="hx-font-semibold hx-inline-block hx-text-gray-500 hover:hx-text-gray-900 dark:hx-text-gray-400 dark:hover:hx-text-gray-300 contrast-more:hx-text-gray-900 contrast-more:hx-underline contrast-more:dark:hx-text-gray-50 hx-w-full hx-break-words" href="#-abh%c3%a4ngigkeiten">📚 Abhängigkeiten
+        <a class="hx-font-semibold hx-inline-block hx-text-gray-500 hover:hx-text-gray-900 dark:hx-text-gray-400 dark:hover:hx-text-gray-300 contrast-more:hx-text-gray-900 contrast-more:hx-underline contrast-more:dark:hx-text-gray-50 hx-w-full hx-break-words" href="#-funktionsweise-im-detail">⚙️ Funktionsweise im Detail
+        </a>
+      </li>
+      <li class="hx-my-2 hx-scroll-my-6 hx-scroll-py-6">
+        <a class="hx-font-semibold hx-inline-block hx-text-gray-500 hover:hx-text-gray-900 dark:hx-text-gray-400 dark:hover:hx-text-gray-300 contrast-more:hx-text-gray-900 contrast-more:hx-underline contrast-more:dark:hx-text-gray-50 hx-w-full hx-break-words" href="#-fehlerbehandlung">🧪 Fehlerbehandlung
+        </a>
+      </li>
+      <li class="hx-my-2 hx-scroll-my-6 hx-scroll-py-6">
+        <a class="hx-font-semibold hx-inline-block hx-text-gray-500 hover:hx-text-gray-900 dark:hx-text-gray-400 dark:hover:hx-text-gray-300 contrast-more:hx-text-gray-900 contrast-more:hx-underline contrast-more:dark:hx-text-gray-50 hx-w-full hx-break-words" href="#-erweiterbarkeit">🔄 Erweiterbarkeit
         </a>
       </li></ul>
       <div class="hx-mt-8 hx-border-t hx-bg-white hx-pt-8 hx-shadow-[0_-12px_16px_white] dark:hx-bg-dark dark:hx-shadow-[0_-12px_16px_#111] hx-sticky hx-bottom-0 hx-flex hx-flex-col hx-items-start hx-gap-2 hx-pb-8 dark:hx-border-neutral-800 contrast-more:hx-border-t contrast-more:hx-border-neutral-400 contrast-more:hx-shadow-none contrast-more:dark:hx-border-neutral-400">
@@ -469,281 +436,172 @@
   <div class="hx-mt-1.5 hx-flex hx-items-center hx-gap-1 hx-overflow-hidden hx-text-sm hx-text-gray-500 dark:hx-text-gray-400 contrast-more:hx-text-current">
         <div class="hx-whitespace-nowrap hx-transition-colors hx-min-w-[24px] hx-overflow-hidden hx-text-ellipsis hover:hx-text-gray-900 dark:hover:hx-text-gray-100">
           <a href="/docs/">Docs</a>
-        </div><svg class="hx-w-3.5 hx-shrink-0 rtl:-hx-rotate-180" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg><div class="hx-whitespace-nowrap hx-transition-colors hx-font-medium hx-text-gray-700 contrast-more:hx-font-bold contrast-more:hx-text-current dark:hx-text-gray-100 contrast-more:dark:hx-text-current">Angebot Service</div>
+        </div><svg class="hx-w-3.5 hx-shrink-0 rtl:-hx-rotate-180" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg><div class="hx-whitespace-nowrap hx-transition-colors hx-font-medium hx-text-gray-700 contrast-more:hx-font-bold contrast-more:hx-text-current dark:hx-text-gray-100 contrast-more:dark:hx-text-current">Chat Service</div>
   </div>
 
         <div class="content">
-          <h1>Angebot Service</h1>
+          <h1>Chat Service</h1>
           <pre class="mermaid hx-mt-6">
   classDiagram
-    %% Controller
-    class OfferController {
-        - Server *server.Server
-        - Client *msclient.Client
-        - service service.Service
-        - AuthMiddleware *auth.AuthMiddleware
-        - Conn *nats.Conn
-        + PayOffer()
-        + OccupyOffer()
-        + handleCreateOffer()
-        + handleGetOffer()
-        + handleGetOfferByFilter()
-        + handlePostRating()
+    direction TB
+
+    class ChatController {
+        - service: Service
+        - AuthMiddleware: AuthMiddleware
+        +HandleGetChats(w http.ResponseWriter, r *http.Request)
+        +CreateChat(w http.ResponseWriter, r *http.Request)
+        +HandleGetChat(w http.ResponseWriter, r *http.Request)
+        +HandleSendMessage(w http.ResponseWriter, r *http.Request)
+        +setupRoutes()
     }
 
-    %% Services
-    class service.Service {
-        + CreateOffer(offer, imageURL)
-        + GetOffer(uuid)
-        + GetOffersByFilter(filter)
-        + OccupieOffer(id, userId, space)
-        + PayOffer(id, userId)
+    class Service {
+        +GetChats(userId uuid.UUID) []Chat
+        +CreateChat(userIds ...uuid.UUID) uuid.UUID
+        +GetChat(chatId, userId uuid.UUID) []Message
+        +SendMessage(userId, chatId uuid.UUID, content string) error
     }
 
-    class repoangebot.Offer {
-        - uuid ID
-        - string Title
-        - string Description
-        - Location Location
-        - float64 Price
-        - float64 Size
-        - Time AvailableFrom
-        - uuid Creator
+    class AuthMiddleware {
+        +EnsureJWT(handler http.HandlerFunc) http.HandlerFunc
     }
 
-    class repoangebot.Space {
-        - float Width
-        - float Height
-        - float Depth
+    class Server {
+        +WithHandlerFunc(path string, handler http.HandlerFunc, method string)
+        +Error(w http.ResponseWriter, message string, statusCode int)
+        +GetLogger() Logger
     }
 
-    class repoangebot.Filter {
-        - float MinPrice
-        - float MaxPrice
-        - float Latitude
-        - float Longitude
-        - float Radius
+
+    ChatController --&gt; Service
+    ChatController --&gt; AuthMiddleware
+    ChatController --&gt; Server
+
+    Service --&gt; Repo
+
+    class Repo {
+        &lt;&lt;interface&gt;&gt;
     }
-
-    class ratingservice.Rating {
-        - int Score
-        - string Comment
-    }
-
-    %% Abhängigkeiten &amp; Beziehungen
-    OfferController --&gt; service.Service
-    OfferController --&gt; repoangebot.Offer
-    OfferController --&gt; repoangebot.Space
-    OfferController --&gt; repoangebot.Filter
-    OfferController --&gt; ratingservice.Rating
-    OfferController --&gt; msclient.Client
-    OfferController --&gt; auth.AuthMiddleware
-    OfferController --&gt; nats.Conn
-</pre><h1>📦 Angebotservice</h1><p>Der <code>angebotservice</code> stellt REST-HTTP-Endpunkte zur Verwaltung von Angeboten bereit. Dazu gehören das Erstellen, Abrufen, Buchen, Bezahlen und Bewerten von Angeboten. Die Authentifizierung erfolgt per JWT, und die Bewertung wird asynchron über NATS verarbeitet.</p>
-<hr>
-<h2>🧰 Features<span class="hx-absolute -hx-mt-20" id="-features"></span>
-    <a href="#-features" class="subheading-anchor" aria-label="Permalink for this section"></a></h2><ul>
-<li>🔐 Authentifizierte Angebots-Erstellung</li>
-<li>🔎 Filterbare Angebotssuche</li>
-<li>💬 Bewertungen über NATS Messaging</li>
-<li>💳 Angebotsbuchung &amp; Bezahlung</li>
-<li>🖼️ Bild-URL-Generierung über Medienservice</li>
-<li>✅ Swagger-kompatible API-Dokumentation</li>
-</ul>
-<hr>
-<h2>🚀 Quickstart<span class="hx-absolute -hx-mt-20" id="-quickstart"></span>
-    <a href="#-quickstart" class="subheading-anchor" aria-label="Permalink for this section"></a></h2><h3>Voraussetzungen<span class="hx-absolute -hx-mt-20" id="voraussetzungen"></span>
-    <a href="#voraussetzungen" class="subheading-anchor" aria-label="Permalink for this section"></a></h3><ul>
-<li>Go 1.20+</li>
-<li>NATS Server (erreichbar über Umgebungsvariable <code>NATS_URL</code>)</li>
-<li>Auth-Secret (für JWT-Middleware)</li>
-</ul>
-<h3>Beispiel: Initialisierung<span class="hx-absolute -hx-mt-20" id="beispiel-initialisierung"></span>
-    <a href="#beispiel-initialisierung" class="subheading-anchor" aria-label="Permalink for this section"></a></h3><div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-
-<div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">svc</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">service</span>.<span style="color:#a6e22e">NewOfferService</span>(<span style="color:#a6e22e">repo</span>, <span style="color:#a6e22e">mediaClient</span>)
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">secret</span> <span style="color:#f92672">:=</span> []byte(<span style="color:#e6db74">&#34;dein_geheimes_jwt_secret&#34;</span>)
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">controller</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">angebotservice</span>.<span style="color:#a6e22e">New</span>(<span style="color:#a6e22e">svc</span>, <span style="color:#a6e22e">secret</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">ListenAndServe</span>(<span style="color:#e6db74">&#34;:8080&#34;</span>, <span style="color:#a6e22e">controller</span>.<span style="color:#a6e22e">Router</span>)</span></span></code></pre></div></div><div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
-  <button
-    class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
-    title="Copy code"
-  >
-    <div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4"></div>
-    <div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4"></div>
-  </button>
-</div>
-</div>
-<hr>
-<h2>🔁 HTTP-Endpunkte<span class="hx-absolute -hx-mt-20" id="-http-endpunkte"></span>
-    <a href="#-http-endpunkte" class="subheading-anchor" aria-label="Permalink for this section"></a></h2><table>
-  <thead>
-      <tr>
-          <th>Methode</th>
-          <th>Pfad</th>
-          <th>Beschreibung</th>
-          <th>Authentifizierung</th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td><code>POST</code></td>
-          <td><code>/angebot/filter</code></td>
-          <td>Angebote nach Filter abrufen</td>
-          <td>❌</td>
-      </tr>
-      <tr>
-          <td><code>POST</code></td>
-          <td><code>/angebot</code></td>
-          <td>Neues Angebot erstellen</td>
-          <td>✅</td>
-      </tr>
-      <tr>
-          <td><code>GET</code></td>
-          <td><code>/angebot/{id}</code></td>
-          <td>Angebot nach ID abrufen</td>
-          <td>❌</td>
-      </tr>
-      <tr>
-          <td><code>POST</code></td>
-          <td><code>/angebot/{id}/occupy</code></td>
-          <td>Angebot buchen</td>
-          <td>✅</td>
-      </tr>
-      <tr>
-          <td><code>POST</code></td>
-          <td><code>/angebot/{id}/pay</code></td>
-          <td>Angebot bezahlen</td>
-          <td>✅</td>
-      </tr>
-      <tr>
-          <td><code>POST</code></td>
-          <td><code>/angebot/{id}/rating</code></td>
-          <td>Angebot bewerten (via NATS)</td>
-          <td>✅</td>
-      </tr>
-  </tbody>
-</table>
-<hr>
-<h2>🔐 Authentifizierung<span class="hx-absolute -hx-mt-20" id="-authentifizierung"></span>
-    <a href="#-authentifizierung" class="subheading-anchor" aria-label="Permalink for this section"></a></h2><ul>
-<li>JWT wird über den HTTP-Header <code>Authorization: Bearer &lt;token&gt;</code> mitgesendet.</li>
-<li>Der Token muss die <code>UserId</code> enthalten, welche vom <code>auth.AuthMiddleware</code> ausgelesen und als Header <code>UserId</code> weitergereicht wird.</li>
-</ul>
-<hr>
-<h2>🧾 Beispieldatenstrukturen<span class="hx-absolute -hx-mt-20" id="-beispieldatenstrukturen"></span>
-    <a href="#-beispieldatenstrukturen" class="subheading-anchor" aria-label="Permalink for this section"></a></h2><h3>🎯 Angebotsstruktur (<code>repoangebot.Offer</code>)<span class="hx-absolute -hx-mt-20" id="-angebotsstruktur-repoangebotoffer"></span>
-    <a href="#-angebotsstruktur-repoangebotoffer" class="subheading-anchor" aria-label="Permalink for this section"></a></h3><div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-
-<div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;title&#34;</span>: <span style="color:#e6db74">&#34;Tiefgaragenstellplatz&#34;</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;description&#34;</span>: <span style="color:#e6db74">&#34;Mit direktem Zugang zum Aufzug.&#34;</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;location&#34;</span>: {
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;latitude&#34;</span>: <span style="color:#ae81ff">48.137</span>,
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;longitude&#34;</span>: <span style="color:#ae81ff">11.575</span>
-</span></span><span style="display:flex;"><span>  },
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;price&#34;</span>: <span style="color:#ae81ff">50</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;size&#34;</span>: <span style="color:#ae81ff">12</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;availableFrom&#34;</span>: <span style="color:#e6db74">&#34;2025-07-01&#34;</span>
-</span></span><span style="display:flex;"><span>}</span></span></code></pre></div></div><div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
-  <button
-    class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
-    title="Copy code"
-  >
-    <div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4"></div>
-    <div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4"></div>
-  </button>
-</div>
-</div>
-<h3>📥 Bewertung (<code>ratingservice.Rating</code>)<span class="hx-absolute -hx-mt-20" id="-bewertung-ratingservicerating"></span>
-    <a href="#-bewertung-ratingservicerating" class="subheading-anchor" aria-label="Permalink for this section"></a></h3><div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-
-<div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;score&#34;</span>: <span style="color:#ae81ff">5</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;comment&#34;</span>: <span style="color:#e6db74">&#34;Super Angebot!&#34;</span>
-</span></span><span style="display:flex;"><span>}</span></span></code></pre></div></div><div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
-  <button
-    class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
-    title="Copy code"
-  >
-    <div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4"></div>
-    <div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4"></div>
-  </button>
-</div>
-</div>
-<hr>
-<h2>💬 NATS Messaging<span class="hx-absolute -hx-mt-20" id="-nats-messaging"></span>
-    <a href="#-nats-messaging" class="subheading-anchor" aria-label="Permalink for this section"></a></h2><ul>
-<li>Bewertungen werden nicht synchron in die Datenbank geschrieben.</li>
-<li>Stattdessen werden sie über NATS veröffentlicht:</li>
-</ul>
-<div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-
-<div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">Publish</span>(<span style="color:#e6db74">&#34;rating.{userID}&#34;</span>, <span style="color:#a6e22e">body</span>)</span></span></code></pre></div></div><div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
-  <button
-    class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
-    title="Copy code"
-  >
-    <div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4"></div>
-    <div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4"></div>
-  </button>
-</div>
-</div>
-<hr>
-<h2>🐞 Fehlerbehandlung<span class="hx-absolute -hx-mt-20" id="-fehlerbehandlung"></span>
-    <a href="#-fehlerbehandlung" class="subheading-anchor" aria-label="Permalink for this section"></a></h2><p>Antworten im Fehlerfall sind konsistent aufgebaut:</p>
-<div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-
-<div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;message&#34;</span>: <span style="color:#e6db74">&#34;Fehlerbeschreibung&#34;</span>
-</span></span><span style="display:flex;"><span>}</span></span></code></pre></div></div><div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
-  <button
-    class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
-    title="Copy code"
-  >
-    <div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4"></div>
-    <div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4"></div>
-  </button>
-</div>
-</div>
-<p>Beispiele für Statuscodes:</p>
-<ul>
-<li><code>400 Bad Request</code> – z. B. bei fehlerhafter UUID</li>
-<li><code>401 Unauthorized</code> – fehlende oder ungültige JWT</li>
-<li><code>500 Internal Server Error</code> – unerwartete Fehler</li>
-</ul>
-<hr>
-<h2>📚 Abhängigkeiten<span class="hx-absolute -hx-mt-20" id="-abhängigkeiten"></span>
+</pre><h1>📦 ChatController – Dokumentation</h1><h2>🧭 Übersicht<span class="hx-absolute -hx-mt-20" id="-übersicht"></span>
+    <a href="#-%c3%bcbersicht" class="subheading-anchor" aria-label="Permalink for this section"></a></h2><p>Der <code>ChatController</code> ist ein HTTP-Controller für den Chat-Service der Anwendung. Er stellt verschiedene REST-Endpoints zur Verfügung, um Chats zu erstellen, abzurufen und Nachrichten zu versenden. Der Controller verwendet JWT-Authentifizierung und basiert auf Gorilla Mux für das Routing.</p>
+<h2>🧩 Abhängigkeiten<span class="hx-absolute -hx-mt-20" id="-abhängigkeiten"></span>
     <a href="#-abh%c3%a4ngigkeiten" class="subheading-anchor" aria-label="Permalink for this section"></a></h2><ul>
 <li>
-<p><a href="https://github.com/gorilla/mux" target="_blank" rel="noopener">Gorilla Mux</a> – Routing</p>
+<p><a href="https://pkg.go.dev/github.com/google/uuid" target="_blank" rel="noopener"><code>github.com/google/uuid</code></a> – zur Arbeit mit UUIDs.</p>
 </li>
 <li>
-<p><a href="https://github.com/google/uuid" target="_blank" rel="noopener">Google UUID</a></p>
+<p><a href="https://github.com/gorilla/mux" target="_blank" rel="noopener"><code>github.com/gorilla/mux</code></a> – HTTP-Router.</p>
 </li>
 <li>
-<p><a href="https://github.com/nats-io/nats.go" target="_blank" rel="noopener">NATS Go Client</a></p>
-</li>
-<li>
-<p>Eigene Module:</p>
+<p>Benutzerdefinierte Module:</p>
 <ul>
-<li><code>auth</code></li>
-<li><code>server</code></li>
-<li><code>ratingservice</code></li>
-<li><code>mediaservice/msclient</code></li>
-<li><code>angebotservice/service/repo_angebot</code></li>
+<li><code>service</code> – enthält die Geschäftslogik für Chats.</li>
+<li><code>repo</code> – Schnittstelle zur Datenbank.</li>
+<li><code>auth</code> – JWT-Authentifizierung.</li>
+<li><code>server</code> – generische Server-Initialisierung und Hilfsmethoden.</li>
 </ul>
 </li>
+</ul>
+<hr>
+<h2>🔐 Authentifizierung<span class="hx-absolute -hx-mt-20" id="-authentifizierung"></span>
+    <a href="#-authentifizierung" class="subheading-anchor" aria-label="Permalink for this section"></a></h2><p>Alle Endpunkte sind durch ein JWT geschützt. Der Authentifizierungs-Middleware <code>EnsureJWT()</code> überprüft den Token und stellt sicher, dass der Request gültig ist. Die <code>UserId</code> wird aus dem HTTP-Header <code>UserIdHeader</code> gelesen, der durch die Middleware gesetzt wird.</p>
+<hr>
+<h2>📚 API-Endpunkte<span class="hx-absolute -hx-mt-20" id="-api-endpunkte"></span>
+    <a href="#-api-endpunkte" class="subheading-anchor" aria-label="Permalink for this section"></a></h2><h3><code>GET /chat</code><span class="hx-absolute -hx-mt-20" id="get-chat"></span>
+    <a href="#get-chat" class="subheading-anchor" aria-label="Permalink for this section"></a></h3><p><strong>Beschreibung:</strong> Gibt alle Chats des authentifizierten Nutzers zurück.
+<strong>Header:</strong> <code>Authorization: Bearer &lt;JWT&gt;</code>
+<strong>Antwort:</strong> JSON-Liste von <code>repo.Chat</code> Objekten.</p>
+<h3><code>POST /chat</code><span class="hx-absolute -hx-mt-20" id="post-chat"></span>
+    <a href="#post-chat" class="subheading-anchor" aria-label="Permalink for this section"></a></h3><p><strong>Beschreibung:</strong> Erstellt einen neuen Chat mit den angegebenen Benutzer-IDs (inklusive sich selbst).
+<strong>Body:</strong></p>
+<div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+
+<div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;userIds&#34;</span>: [<span style="color:#e6db74">&#34;&lt;uuid1&gt;&#34;</span>, <span style="color:#e6db74">&#34;&lt;uuid2&gt;&#34;</span>, <span style="color:#960050;background-color:#1e0010">...</span>]
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div></div><div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+  <button
+    class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+    title="Copy code"
+  >
+    <div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4"></div>
+    <div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4"></div>
+  </button>
+</div>
+</div>
+<p><strong>Antwort:</strong> ID des neu erstellten Chats als JSON-String.</p>
+<h3><code>GET /chat/{chatId}</code><span class="hx-absolute -hx-mt-20" id="get-chatchatid"></span>
+    <a href="#get-chatchatid" class="subheading-anchor" aria-label="Permalink for this section"></a></h3><p><strong>Beschreibung:</strong> Gibt alle Nachrichten für einen bestimmten Chat zurück.
+<strong>Path-Parameter:</strong> <code>chatId</code> (UUID)
+<strong>Antwort:</strong> JSON-Liste von <code>repo.Message</code> Objekten.</p>
+<h3><code>POST /chat/{chatId}/messages</code><span class="hx-absolute -hx-mt-20" id="post-chatchatidmessages"></span>
+    <a href="#post-chatchatidmessages" class="subheading-anchor" aria-label="Permalink for this section"></a></h3><p><strong>Beschreibung:</strong> Sendet eine Nachricht in einen bestimmten Chat.
+<strong>Path-Parameter:</strong> <code>chatId</code> (UUID)
+<strong>Body:</strong></p>
+<div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+
+<div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;content&#34;</span>: <span style="color:#e6db74">&#34;Hallo Welt!&#34;</span>
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div></div><div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+  <button
+    class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+    title="Copy code"
+  >
+    <div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4"></div>
+    <div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4"></div>
+  </button>
+</div>
+</div>
+<p><strong>Antwort:</strong> HTTP 201 Created, keine Body-Antwort.</p>
+<hr>
+<h2>⚙️ Funktionsweise im Detail<span class="hx-absolute -hx-mt-20" id="-funktionsweise-im-detail"></span>
+    <a href="#-funktionsweise-im-detail" class="subheading-anchor" aria-label="Permalink for this section"></a></h2><ul>
+<li><strong>Initialisierung:</strong> Die Funktion <code>New()</code> erstellt eine neue <code>ChatController</code>-Instanz, registriert alle Routen und initialisiert den Service.</li>
+<li><strong>Routing:</strong> Wird durch <code>setupRoutes()</code> konfiguriert.</li>
+<li><strong>Fehlerbehandlung:</strong> Einheitlich über die Methode <code>Error(w, message, code)</code> aus der eingebetteten Server-Struktur.</li>
+<li><strong>Logging:</strong> Der Controller nutzt <code>GetLogger().Debug()</code> zur Protokollierung von Nachrichten.</li>
+</ul>
+<hr>
+<h2>🧪 Fehlerbehandlung<span class="hx-absolute -hx-mt-20" id="-fehlerbehandlung"></span>
+    <a href="#-fehlerbehandlung" class="subheading-anchor" aria-label="Permalink for this section"></a></h2><p>Die API gibt im Fehlerfall strukturierte JSON-Objekte vom Typ <code>ErrorResponse</code> zurück:</p>
+<div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+
+<div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;message&#34;</span>: <span style="color:#e6db74">&#34;Fehlermeldung&#34;</span>
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div></div><div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+  <button
+    class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+    title="Copy code"
+  >
+    <div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4"></div>
+    <div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4"></div>
+  </button>
+</div>
+</div>
+<p>HTTP-Statuscodes:</p>
+<ul>
+<li><code>400 Bad Request</code>: Ungültige UUIDs, fehlerhaftes JSON etc.</li>
+<li><code>500 Internal Server Error</code>: Fehler aus der Geschäftslogik oder Datenbank.</li>
+</ul>
+<hr>
+<h2>🔄 Erweiterbarkeit<span class="hx-absolute -hx-mt-20" id="-erweiterbarkeit"></span>
+    <a href="#-erweiterbarkeit" class="subheading-anchor" aria-label="Permalink for this section"></a></h2><p>Der Controller ist modular aufgebaut:</p>
+<ul>
+<li>Neue Endpunkte können leicht durch weitere Methoden und <code>WithHandlerFunc</code>-Registrierungen ergänzt werden.</li>
+<li><code>Service</code>-Schicht kapselt die Geschäftslogik und ist leicht austauschbar/testbar.</li>
+<li>Durch Middleware flexibel erweiterbar (z. B. für Rate-Limiting, Logging, etc.).</li>
 </ul>
 
         </div>
         <div class="hx-mt-16"></div>
         <div class="hx-mb-8 hx-flex hx-items-center hx-border-t hx-pt-8 dark:hx-border-neutral-800 contrast-more:hx-border-neutral-400 dark:contrast-more:hx-border-neutral-400 print:hx-hidden"><a
-        href="/docs/chat-service/"
-        title="Chat Service"
+        href="/docs/offer-service/"
+        title="Angebot Service"
+        class="hx-flex hx-max-w-[50%] hx-items-center hx-gap-1 hx-py-4 hx-text-base hx-font-medium hx-text-gray-600 hx-transition-colors [word-break:break-word] hover:hx-text-primary-600 dark:hx-text-gray-300 md:hx-text-lg ltr:hx-pr-4 rtl:hx-pl-4"
+      ><svg class="hx-inline hx-h-5 hx-shrink-0 ltr:hx-rotate-180" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>Angebot Service</a><a
+        href="/docs/gateway/"
+        title="Gateway"
         class="hx-flex hx-max-w-[50%] hx-items-center hx-gap-1 hx-py-4 hx-text-base hx-font-medium hx-text-gray-600 hx-transition-colors [word-break:break-word] hover:hx-text-primary-600 dark:hx-text-gray-300 md:hx-text-lg ltr:hx-ml-auto ltr:hx-pl-4 ltr:hx-text-right rtl:hx-mr-auto rtl:hx-pr-4 rtl:hx-text-left"
-      >Chat Service<svg class="hx-inline hx-h-5 hx-shrink-0 rtl:-hx-rotate-180" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></a></div>
+      >Gateway<svg class="hx-inline hx-h-5 hx-shrink-0 rtl:-hx-rotate-180" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></a></div>
         
       </main>
     </article>

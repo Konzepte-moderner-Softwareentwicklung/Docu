@@ -2,129 +2,200 @@
 title: 'Angebot Service'
 ---
 
-Dieser Service ermöglicht das Erstellen, Abrufen und Filtern von Angeboten über eine einfache REST-API. Er unterstützt strukturierte Angebotsobjekte mithilfe von Builder-Pattern-Klassen und basiert auf einer tokenbasierten Authentifizierung.
+```mermaid
+classDiagram
+    %% Controller
+    class OfferController {
+        - Server *server.Server
+        - Client *msclient.Client
+        - service service.Service
+        - AuthMiddleware *auth.AuthMiddleware
+        - Conn *nats.Conn
+        + PayOffer()
+        + OccupyOffer()
+        + handleCreateOffer()
+        + handleGetOffer()
+        + handleGetOfferByFilter()
+        + handlePostRating()
+    }
 
-## 🛠️ Installation
+    %% Services
+    class service.Service {
+        + CreateOffer(offer, imageURL)
+        + GetOffer(uuid)
+        + GetOffersByFilter(filter)
+        + OccupieOffer(id, userId, space)
+        + PayOffer(id, userId)
+    }
 
-1. Binde die `Client`, `OfferBuilder`, `SpaceBuilder`, `ItemBuilder`, etc. Klassen in deinem Frontend ein.
-2. Stelle sicher, dass ein Backend mit folgenden Routen verfügbar ist:
+    class repoangebot.Offer {
+        - uuid ID
+        - string Title
+        - string Description
+        - Location Location
+        - float64 Price
+        - float64 Size
+        - Time AvailableFrom
+        - uuid Creator
+    }
 
-   * `POST /api/angebot`
-   * `GET /api/angebot/:id`
-   * `POST /api/angebot/filter`
+    class repoangebot.Space {
+        - float Width
+        - float Height
+        - float Depth
+    }
+
+    class repoangebot.Filter {
+        - float MinPrice
+        - float MaxPrice
+        - float Latitude
+        - float Longitude
+        - float Radius
+    }
+
+    class ratingservice.Rating {
+        - int Score
+        - string Comment
+    }
+
+    %% Abhängigkeiten & Beziehungen
+    OfferController --> service.Service
+    OfferController --> repoangebot.Offer
+    OfferController --> repoangebot.Space
+    OfferController --> repoangebot.Filter
+    OfferController --> ratingservice.Rating
+    OfferController --> msclient.Client
+    OfferController --> auth.AuthMiddleware
+    OfferController --> nats.Conn
+```
+
+
+
+# 📦 Angebotservice
+
+Der `angebotservice` stellt REST-HTTP-Endpunkte zur Verwaltung von Angeboten bereit. Dazu gehören das Erstellen, Abrufen, Buchen, Bezahlen und Bewerten von Angeboten. Die Authentifizierung erfolgt per JWT, und die Bewertung wird asynchron über NATS verarbeitet.
 
 ---
 
-## 🚀 Verwendung
+## 🧰 Features
 
-### ✅ Angebot erstellen
+* 🔐 Authentifizierte Angebots-Erstellung
+* 🔎 Filterbare Angebotssuche
+* 💬 Bewertungen über NATS Messaging
+* 💳 Angebotsbuchung & Bezahlung
+* 🖼️ Bild-URL-Generierung über Medienservice
+* ✅ Swagger-kompatible API-Dokumentation
 
-```js
-const client = new Client();
-await client.login("user@example.com", "password");
+---
 
-const size = new SizeBuilder().setWidth(100).setHeight(50).setDepth(30);
-const item = new ItemBuilder().setSize(size).setWeight(15);
-const space = new SpaceBuilder().addItem(item).setSeats(2);
+## 🚀 Quickstart
 
-const locationFrom = new LocationBuilder().setLatitude(52.52).setLongitude(13.405);
-const locationTo = new LocationBuilder().setLatitude(48.1351).setLongitude(11.582);
+### Voraussetzungen
 
-const offer = new OfferBuilder()
-  .setTitle("Transport für Möbel")
-  .setDescription("Ich kann dein Sofa mitnehmen.")
-  .setPrice(50)
-  .setLocationFrom(locationFrom.build())
-  .setLocationTo(locationTo.build())
-  .setStartDateTime(new Date().toISOString())
-  .setEndDateTime(new Date(Date.now() + 3600000).toISOString())
-  .setCanTransport(space.build())
-  .build();
+* Go 1.20+
+* NATS Server (erreichbar über Umgebungsvariable `NATS_URL`)
+* Auth-Secret (für JWT-Middleware)
 
-await client.createOffer(offer);
+### Beispiel: Initialisierung
+
+```go
+svc := service.NewOfferService(repo, mediaClient)
+secret := []byte("dein_geheimes_jwt_secret")
+controller := angebotservice.New(svc, secret)
+
+http.ListenAndServe(":8080", controller.Router)
 ```
 
 ---
 
-### 🔍 Angebote filtern
+## 🔁 HTTP-Endpunkte
 
-```js
-const filter = new FilterBuilder()
-  .setNameStartsWith("Transport")
-  .setLocationFrom(locationFrom)
-  .setLocationTo(locationTo)
-  .build();
-
-const results = await client.getOffersByFilter(filter);
-console.log(results);
-```
-
----
-
-### 📄 Angebot abrufen
-
-```js
-const offer = await client.getOfferById("angebot-id-123");
-console.log(offer);
-```
-
----
-
-## 🧱 Builder-Klassen
-
-| Klasse            | Zweck                                  |
-| ----------------- | -------------------------------------- |
-| `OfferBuilder`    | Erstellen eines vollständigen Angebots |
-| `SpaceBuilder`    | Beschreibt den verfügbaren Platz       |
-| `ItemBuilder`     | Einzelnes zu transportierendes Objekt  |
-| `SizeBuilder`     | Dimensionen eines Items                |
-| `LocationBuilder` | Geografische Koordinaten               |
-| `FilterBuilder`   | Filterkriterien für Angebotssuche      |
-
-Jede `build()`-Methode validiert automatisch alle Pflichtfelder und wirft bei Fehlern eine aussagekräftige Exception.
-
----
-
-## 🌐 API-Endpunkte
-
-| Methode | Pfad                  | Beschreibung                         |
-| ------- | --------------------- | ------------------------------------ |
-| POST    | `/api/angebot`        | Erstellt ein neues Angebot           |
-| GET     | `/api/angebot/:id`    | Holt ein Angebot per ID              |
-| POST    | `/api/angebot/filter` | Holt eine Liste gefilterter Angebote |
-
----
-
-## ⚠️ Fehlerbehandlung
-
-Alle HTTP-Aufrufe werfen Exceptions bei Fehlschlägen. Fehlermeldungen werden als `Error`-Objekte mit Statuscodes und Text bereitgestellt:
-
-```js
-try {
-  await client.createOffer(myOffer);
-} catch (err) {
-  console.error("Fehler beim Erstellen des Angebots:", err.message);
-}
-```
+| Methode | Pfad                   | Beschreibung                 | Authentifizierung |
+| ------- | ---------------------- | ---------------------------- | ----------------- |
+| `POST`  | `/angebot/filter`      | Angebote nach Filter abrufen | ❌                 |
+| `POST`  | `/angebot`             | Neues Angebot erstellen      | ✅                 |
+| `GET`   | `/angebot/{id}`        | Angebot nach ID abrufen      | ❌                 |
+| `POST`  | `/angebot/{id}/occupy` | Angebot buchen               | ✅                 |
+| `POST`  | `/angebot/{id}/pay`    | Angebot bezahlen             | ✅                 |
+| `POST`  | `/angebot/{id}/rating` | Angebot bewerten (via NATS)  | ✅                 |
 
 ---
 
 ## 🔐 Authentifizierung
 
-Der Nutzer muss vor dem Erstellen eines Angebots angemeldet sein. Ein gültiges Token wird intern vom `Client` verwaltet:
+* JWT wird über den HTTP-Header `Authorization: Bearer <token>` mitgesendet.
+* Der Token muss die `UserId` enthalten, welche vom `auth.AuthMiddleware` ausgelesen und als Header `UserId` weitergereicht wird.
 
-```js
-await client.login("email", "password"); // Token wird automatisch gesetzt
+---
+
+## 🧾 Beispieldatenstrukturen
+
+### 🎯 Angebotsstruktur (`repoangebot.Offer`)
+
+```json
+{
+  "title": "Tiefgaragenstellplatz",
+  "description": "Mit direktem Zugang zum Aufzug.",
+  "location": {
+    "latitude": 48.137,
+    "longitude": 11.575
+  },
+  "price": 50,
+  "size": 12,
+  "availableFrom": "2025-07-01"
+}
+```
+
+### 📥 Bewertung (`ratingservice.Rating`)
+
+```json
+{
+  "score": 5,
+  "comment": "Super Angebot!"
+}
 ```
 
 ---
 
-## 💬 WebSocket Integration (optional)
+## 💬 NATS Messaging
 
-Nach erfolgreicher Anmeldung wird automatisch ein WebSocket geöffnet, z.B. für Echtzeitkommunikation:
+* Bewertungen werden nicht synchron in die Datenbank geschrieben.
+* Stattdessen werden sie über NATS veröffentlicht:
 
-```js
-client.registerOnMessage((msg) => {
-  console.log("Neue Nachricht:", msg);
-});
+```go
+c.Publish("rating.{userID}", body)
 ```
+
+---
+
+## 🐞 Fehlerbehandlung
+
+Antworten im Fehlerfall sind konsistent aufgebaut:
+
+```json
+{
+  "message": "Fehlerbeschreibung"
+}
+```
+
+Beispiele für Statuscodes:
+
+* `400 Bad Request` – z. B. bei fehlerhafter UUID
+* `401 Unauthorized` – fehlende oder ungültige JWT
+* `500 Internal Server Error` – unerwartete Fehler
+
+---
+
+## 📚 Abhängigkeiten
+
+* [Gorilla Mux](https://github.com/gorilla/mux) – Routing
+* [Google UUID](https://github.com/google/uuid)
+* [NATS Go Client](https://github.com/nats-io/nats.go)
+* Eigene Module:
+
+   * `auth`
+   * `server`
+   * `ratingservice`
+   * `mediaservice/msclient`
+   * `angebotservice/service/repo_angebot`
+
