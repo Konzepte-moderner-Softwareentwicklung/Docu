@@ -50,3 +50,6 @@ This Docker Compose setup orchestrates multiple services that together form a mi
    ```bash
    git clone https://github.com/Konzepte-moderner-Softwareentwicklung/Backend.git
    cd Backend
+    
+   docker compose up --build
+
